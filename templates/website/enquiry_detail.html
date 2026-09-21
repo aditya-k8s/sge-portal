@@ -1,0 +1,165 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Enquiry — {{ enquiry.name }} — SGE{% endblock %}
+{% block page_title %}Enquiry Detail{% endblock %}
+
+{% block content %}
+
+<!-- Action bar -->
+<div class="flex flex-wrap items-center gap-3 mb-6">
+  <a href="{% url 'enquiry_list' %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-steel-600 text-sm font-medium rounded-lg transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to Enquiries
+  </a>
+  <!-- Status updater -->
+  <form method="post" class="flex items-center gap-2">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="update_status">
+    <select name="status" onchange="this.form.submit()"
+            class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+      {% for val, label in enquiry.STATUS_CHOICES %}
+      <option value="{{ val }}" {% if enquiry.status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <a href="{% url 'enquiry_delete' enquiry.pk %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-red-300 hover:bg-red-50 text-red-600 text-sm font-semibold rounded-lg transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    Delete
+  </a>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <!-- Left: Contact details -->
+  <div class="space-y-5">
+
+    <!-- Sender info -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+      <div class="flex items-center gap-4 mb-5 pb-5 border-b border-gray-100">
+        <div class="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 text-2xl font-bold flex-shrink-0">
+          {{ enquiry.name|first|upper }}
+        </div>
+        <div>
+          <p class="font-bold text-steel-800 text-lg">{{ enquiry.name }}</p>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+            {% if enquiry.status == 'new' %}bg-orange-100 text-orange-700
+            {% elif enquiry.status == 'read' %}bg-blue-100 text-blue-700
+            {% elif enquiry.status == 'replied' %}bg-green-100 text-green-700
+            {% else %}bg-gray-100 text-gray-500{% endif %}">
+            {{ enquiry.get_status_display }}
+          </span>
+        </div>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-0.5">Email</p>
+          <a href="mailto:{{ enquiry.email }}" class="text-orange-600 hover:underline">{{ enquiry.email }}</a>
+        </div>
+        {% if enquiry.phone %}
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-0.5">Phone</p>
+          <a href="tel:{{ enquiry.phone }}" class="text-steel-700">{{ enquiry.phone }}</a>
+        </div>
+        {% endif %}
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-0.5">Received</p>
+          <p class="text-steel-700">{{ enquiry.submitted_at|date:"d M Y, H:i" }}</p>
+        </div>
+        {% if enquiry.read_at %}
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-0.5">Read At</p>
+          <p class="text-steel-700">{{ enquiry.read_at|date:"d M Y, H:i" }}</p>
+        </div>
+        {% endif %}
+        {% if enquiry.ip_address %}
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-0.5">IP Address</p>
+          <p class="text-steel-500 text-xs font-mono">{{ enquiry.ip_address }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Quick actions -->
+      <div class="mt-5 pt-4 border-t border-gray-100 flex flex-col gap-2">
+        <a href="mailto:{{ enquiry.email }}?subject=Re: {{ enquiry.subject }}"
+           class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Open in Gmail
+        </a>
+        {% if enquiry.phone %}
+        <a href="tel:{{ enquiry.phone }}"
+           class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-steel-700 text-sm font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          Call {{ enquiry.phone }}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Admin Notes -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+      <h3 class="text-sm font-semibold text-steel-700 mb-3">Internal Notes</h3>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_notes">
+        <textarea name="admin_notes" rows="4"
+                  class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                  placeholder="Add your notes here...">{{ enquiry.admin_notes }}</textarea>
+        <button type="submit"
+                class="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-steel-800 hover:bg-steel-700 text-white text-xs font-semibold rounded-lg transition-colors">
+          Save Notes
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right: Message + Reply -->
+  <div class="xl:col-span-2 space-y-5">
+
+    <!-- Message -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+        <h2 class="font-bold text-steel-800">{{ enquiry.subject }}</h2>
+        <p class="text-xs text-steel-400 mt-0.5">{{ enquiry.submitted_at|date:"l, d F Y at H:i" }}</p>
+      </div>
+      <div class="px-6 py-5">
+        <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+          <p class="text-sm text-steel-700 leading-relaxed whitespace-pre-wrap">{{ enquiry.message }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reply form -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center gap-3">
+        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-steel-800 text-sm">Send Reply</p>
+          <p class="text-xs text-steel-400">Reply will be sent to {{ enquiry.email }}</p>
+        </div>
+      </div>
+      <form method="post" class="px-6 py-5">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="send_reply">
+        <textarea name="reply_text" rows="5" required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none mb-3"
+                  placeholder="Type your reply here..."></textarea>
+        <div class="flex items-center gap-3">
+          <button type="submit"
+                  class="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            Send Reply
+          </button>
+          <p class="text-xs text-steel-400">Status will be updated to "Replied" automatically</p>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

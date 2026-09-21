@@ -1,0 +1,90 @@
+{% load static %}<!DOCTYPE html>
+{% comment %}
+Shell for the error pages.
+
+Deliberately does NOT extend base.html. That template loads the PWA tags and
+the page context includes processors that query the database, so an error
+caused by the database (exactly when the 500 page is needed) would fail to
+render and the visitor would get Django's bare fallback instead. Everything
+here is inline and self-contained.
+{% endcomment %}
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{% block title %}Something went wrong{% endblock %} — Shri Gouri Engineers</title>
+  <link rel="icon" type="image/png" href="{% static 'icons/favicon.png' %}">
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+    .panel {
+      max-width: 30rem;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+    .code {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ea580c;
+      background: #fff7ed;
+      border-radius: 999px;
+      padding: 5px 14px;
+      margin-bottom: 18px;
+    }
+    h1 { font-size: 1.5rem; margin: 0 0 12px; }
+    p { margin: 0 0 24px; color: #475569; font-size: 0.9375rem; }
+    .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    a.button {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      padding: 11px 22px;
+      border-radius: 10px;
+      background: #ea580c;
+      color: #fff;
+    }
+    a.button:hover { background: #c2410c; }
+    a.secondary {
+      background: #fff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+    a.secondary:hover { background: #f1f5f9; }
+    @media (max-width: 420px) {
+      .panel { padding: 32px 20px; }
+      .actions a.button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <span class="code">{% block code %}Error{% endblock %}</span>
+    <h1>{% block heading %}Something went wrong{% endblock %}</h1>
+    <p>{% block message %}Please try again.{% endblock %}</p>
+    <div class="actions">
+      <a class="button" href="{% block home_url %}/{% endblock %}">Go to the home page</a>
+      {% block extra_actions %}{% endblock %}
+    </div>
+  </main>
+</body>
+</html>

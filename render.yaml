@@ -1,0 +1,108 @@
+# Render Blueprint — free-tier deployment for testing.
+#
+# Deploy: push this file, then in the Render dashboard choose
+# New -> Blueprint and pick this repository. Render reads this file and
+# creates the service; you then set the secret values it asks for.
+#
+# The database is NOT defined here on purpose. Render's own free PostgreSQL
+# expires 30 days after creation and is then deleted, which is no good for a
+# test site you want to keep. Use Aiven's always-free MySQL instead and set
+# the DB_* variables below — that also keeps the app on MySQL, so no code or
+# migration changes are needed. See docs/DEPLOY_FREE.md.
+
+services:
+  - type: web
+    name: sge-portal
+    runtime: python
+    plan: free
+    region: singapore          # closest Render region to India; also: oregon, frankfurt
+    branch: prod
+
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate --noinput
+
+    # $PORT is assigned by Render and must be honoured.
+    # Two workers, not three: the free instance has 512 MB of RAM.
+    startCommand: >
+      gunicorn config.wsgi:application
+      --bind 0.0.0.0:$PORT
+      --workers 2
+      --timeout 60
+      --access-logfile -
+      --error-logfile -
+
+    healthCheckPath: /
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+
+      # Generated once by Render and kept thereafter. Rotating it invalidates
+      # all sessions and password-reset links.
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: DEBUG
+        value: "False"
+
+      # RENDER_EXTERNAL_HOSTNAME is added to ALLOWED_HOSTS automatically by
+      # config/settings.py, so the hostname need not be known in advance.
+      # Add a custom domain here later if you attach one.
+      - key: ALLOWED_HOSTS
+        value: "localhost,127.0.0.1"
+
+      # Uploaded drawings and invoices live on the instance disk, which Render
+      # wipes on every deploy and restart. Acceptable for testing; move to
+      # object storage before this holds anything that matters.
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "10"
+
+      - key: TIME_ZONE
+        value: "Asia/Kolkata"
+
+      - key: LOG_TO_FILE
+        value: "False"     # Render captures stdout; a rotating file is lost anyway
+
+      # -- Database: fill these in from your Aiven MySQL service ------------
+      - key: DB_ENGINE
+        value: mysql
+      - key: DB_NAME
+        sync: false        # Aiven default: defaultdb
+      - key: DB_USER
+        sync: false        # Aiven default: avnadmin
+      - key: DB_PASSWORD
+        sync: false        # set in the dashboard; never commit it
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      # Aiven requires TLS. Preferred: upload Aiven's ca.pem as a Render
+      # Secret File named ca.pem and set DB_SSL_CA=/etc/secrets/ca.pem.
+      # Fallback if that is awkward: set DB_SSL=true, which encrypts the
+      # connection without verifying the certificate.
+      - key: DB_SSL_CA
+        sync: false
+
+      # -- Email (optional for a test deploy) -------------------------------
+      # Leave EMAIL_BACKEND unset to fall back to SMTP; with no credentials
+      # sending simply fails and is logged. To read OTP codes from the Render
+      # logs instead of sending them, set:
+      #   EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+      - key: EMAIL_BACKEND
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: COMPANY_EMAIL
+        sync: false
+
+      # Used for links in outgoing email. Set to your Render URL after the
+      # first deploy, e.g. https://sge-portal.onrender.com
+      - key: SITE_URL
+        sync: false

@@ -1,0 +1,16 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Delete Work Sample — SGE{% endblock %}
+{% block page_title %}Delete Work Sample{% endblock %}
+{% block content %}
+<div class="max-w-md">
+  <div class="card border border-red-200">
+    <h2 class="text-lg font-bold text-steel-800 mb-2">Delete "{{ sample.title }}"?</h2>
+    <p class="text-sm text-steel-500 mb-5">This will permanently remove the work sample and its image.</p>
+    <form method="post" class="flex gap-3">
+      {% csrf_token %}
+      <button type="submit" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">Delete</button>
+      <a href="{% url 'work_sample_list' %}" class="btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

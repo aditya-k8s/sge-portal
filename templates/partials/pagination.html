@@ -1,0 +1,63 @@
+{% comment %}
+Reusable pagination control.
+
+Expects `page_obj` in the context. Preserves every other query parameter
+(search terms, status filters) so paging does not silently drop the filter the
+user applied -- which is why it rebuilds the query string rather than emitting
+a bare ?page= link.
+
+Usage:  {% include "partials/pagination.html" %}
+{% endcomment %}
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="flex items-center justify-between gap-3 flex-wrap px-4 py-3 border-t border-gray-100"
+     aria-label="Pagination">
+
+  <p class="text-xs text-steel-500">
+    Showing <span class="font-semibold text-steel-700">{{ page_obj.start_index }}</span>
+    to <span class="font-semibold text-steel-700">{{ page_obj.end_index }}</span>
+    of <span class="font-semibold text-steel-700">{{ page_obj.paginator.count }}</span>
+  </p>
+
+  <div class="flex items-center gap-1">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}"
+         rel="prev"
+         class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-steel-700 bg-white border border-gray-300 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Previous
+      </a>
+    {% else %}
+      <span class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-steel-300 bg-white border border-gray-200 rounded-lg cursor-not-allowed">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Previous
+      </span>
+    {% endif %}
+
+    <span class="px-3 py-1.5 text-xs text-steel-500">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&amp;{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}"
+         rel="next"
+         class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-steel-700 bg-white border border-gray-300 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-colors">
+        Next
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    {% else %}
+      <span class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-steel-300 bg-white border border-gray-200 rounded-lg cursor-not-allowed">
+        Next
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

@@ -1,0 +1,17 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Delete Stage — SGE{% endblock %}
+{% block page_title %}Delete Stage{% endblock %}
+{% block content %}
+<div class="max-w-md">
+  <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-6">
+    <h2 class="text-lg font-bold text-steel-800 mb-2">Delete "{{ template.name }}"?</h2>
+    <p class="text-sm text-steel-500 mb-2">This removes the stage from the default template.</p>
+    <p class="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 mb-5">⚠ Existing projects with this stage will NOT be affected — only future new projects.</p>
+    <form method="post" class="flex gap-3">
+      {% csrf_token %}
+      <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">Delete</button>
+      <a href="{% url 'process_template_list' %}" class="inline-flex items-center px-5 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

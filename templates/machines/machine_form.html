@@ -1,0 +1,56 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}{{ title }} — SGE{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+  <a href="{% url 'machine_list' %}" class="btn-secondary text-xs mb-5 inline-flex">← Back to Machines</a>
+  <div class="card">
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Machine Name *</label>
+          {{ form.machine_name }}
+          {% if form.machine_name.errors %}<p class="text-xs text-red-500 mt-1">{{ form.machine_name.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Machine Type *</label>
+          {{ form.machine_type }}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Model Number</label>
+          {{ form.model_number }}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Manufacturer</label>
+          {{ form.manufacturer }}
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Description</label>
+          {{ form.description }}
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Specifications</label>
+          {{ form.specifications }}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Image</label>
+          {% if machine and machine.image %}
+            <img src="{{ machine.image.url }}" class="w-24 h-24 object-cover rounded-lg mb-2">
+          {% endif %}
+          {{ form.image }}
+        </div>
+        <div class="flex items-center gap-2 pt-6">
+          {{ form.is_active }}
+          <label class="text-sm text-steel-700">Active (available for projects)</label>
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn-primary">{% if machine %}Save Changes{% else %}Add Machine{% endif %}</button>
+        <a href="{% url 'machine_list' %}" class="btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}My Dashboard — SGE{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, {{ request.user.get_full_name|default:request.user.username }}{% endblock %}
+
+{% block content %}
+
+<!-- Stats row -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+    <p class="text-3xl font-bold text-steel-800">{{ total_projects }}</p>
+    <p class="text-xs text-steel-500 mt-1 uppercase tracking-wide">Total Projects</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+    <p class="text-3xl font-bold text-orange-500">{{ in_progress }}</p>
+    <p class="text-xs text-steel-500 mt-1 uppercase tracking-wide">In Progress</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+    <p class="text-3xl font-bold text-green-600">{{ completed }}</p>
+    <p class="text-xs text-steel-500 mt-1 uppercase tracking-wide">Completed</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+    <p class="text-3xl font-bold text-blue-600">{{ pending_bills }}</p>
+    <p class="text-xs text-steel-500 mt-1 uppercase tracking-wide">Pending Bills</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <!-- Active Projects -->
+  <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-steel-700">My Projects</h2>
+      <a href="{% url 'project_list' %}" class="text-xs text-orange-600 hover:underline">View all</a>
+    </div>
+    <div class="divide-y divide-gray-50">
+      {% for project in projects %}
+      <a href="{% url 'project_detail' project.pk %}"
+         class="flex items-center gap-4 px-5 py-4 hover:bg-orange-50 transition-colors group">
+        <!-- Progress circle -->
+        <div class="flex-shrink-0">
+          <div class="relative w-12 h-12">
+            <svg class="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" stroke-width="3"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#E85D04" stroke-width="3"
+                      stroke-dasharray="{{ project.progress_percentage }} {{ 100|add:'-'|add:project.progress_percentage|stringformat:'s' }}"
+                      stroke-linecap="round"/>
+            </svg>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-steel-700">
+              {{ project.progress_percentage }}%
+            </span>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-sm text-steel-800 group-hover:text-orange-600 truncate">{{ project.project_name }}</p>
+          <p class="text-xs text-steel-400 mt-0.5">{{ project.project_code }} · {{ project.current_process|default:"—" }}</p>
+          {% if project.expected_delivery %}
+          <p class="text-xs text-steel-400 mt-0.5">📅 Delivery: {{ project.expected_delivery|date:"d M Y" }}</p>
+          {% endif %}
+        </div>
+        <div class="flex-shrink-0">
+          <span class="badge-{{ project.status }}">{{ project.get_status_display }}</span>
+        </div>
+      </a>
+      {% empty %}
+      <div class="px-5 py-12 text-center">
+        <p class="text-steel-400 text-sm">No projects yet. Contact us to get started!</p>
+        <a href="{% url 'contact' %}" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">Contact Us</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="space-y-5">
+
+    <!-- Recent Bills -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-semibold text-steel-700">Bills & Invoices</h3>
+      </div>
+      <div class="divide-y divide-gray-50">
+        {% for bill in recent_bills %}
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold text-steel-700 truncate">{{ bill.project.project_name }}</p>
+            <p class="text-xs text-steel-400">
+              {% if bill.amount %}Rs. {{ bill.total_amount }}{% endif %}
+              · {{ bill.uploaded_at|date:"d M Y" }}
+            </p>
+          </div>
+          <div class="flex gap-1 flex-shrink-0">
+            <a href="{% url 'download_invoice' bill.project.pk bill.pk %}"
+               class="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs font-medium rounded-md transition-colors">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              PDF
+            </a>
+          </div>
+        </div>
+        {% empty %}
+        <div class="px-4 py-6 text-center text-xs text-steel-400">No bills yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Recent Notifications -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-steel-700">Recent Updates</h3>
+        <a href="{% url 'notification_list' %}" class="text-xs text-orange-600 hover:underline">All</a>
+      </div>
+      <div class="divide-y divide-gray-50">
+        {% for notif in recent_notifications %}
+        <div class="px-4 py-3 {% if not notif.is_read %}bg-orange-50{% endif %}">
+          <p class="text-xs text-steel-700 leading-relaxed">{{ notif.message }}</p>
+          {% if notif.project %}
+          <p class="text-xs text-orange-600 mt-0.5">{{ notif.project.project_name }}</p>
+          {% endif %}
+          <p class="text-xs text-steel-400 mt-0.5">{{ notif.created_at|timesince }} ago</p>
+        </div>
+        {% empty %}
+        <div class="px-4 py-6 text-center text-xs text-steel-400">No notifications.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% load static %}<!DOCTYPE html>
+{% comment %}
+Overrides django-pwa's bundled offline.html, which is an unstyled placeholder
+reading "You are currently not connected to any networks".
+
+Served by the service worker when a navigation cannot reach the network.
+Deliberately self-contained -- no CDN, no external font, no separate
+stylesheet -- because by definition nothing can be fetched when this page is
+shown, and only the page itself and the two icons beside it are precached.
+{% endcomment %}
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Offline — {{ COMPANY_NAME|default:"Shri Gouri Engineers" }}</title>
+  <link rel="icon" type="image/png" href="{% static 'icons/favicon.png' %}">
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #f8fafc;
+      color: #1e293b;
+      font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      text-align: center;
+    }
+    .panel { max-width: 26rem; }
+    img { width: 72px; height: 72px; margin-bottom: 20px; }
+    h1 { font-size: 1.375rem; margin: 0 0 12px; }
+    p { margin: 0 0 20px; color: #475569; }
+    button {
+      appearance: none;
+      border: 0;
+      background: #ea580c;
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover { background: #c2410c; }
+    .hint { font-size: 0.8125rem; color: #94a3b8; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <img src="{% static 'icons/icon-192x192.png' %}" alt="">
+    <h1>You are offline</h1>
+    <p>
+      This page needs a connection. Project details, files and invoices are
+      always loaded live so you never see out-of-date information.
+    </p>
+    <button type="button" onclick="location.reload()">Try again</button>
+    <p class="hint">The app will work normally as soon as you are back online.</p>
+  </div>
+  <script>
+    // Reload by itself the moment connectivity returns.
+    window.addEventListener('online', function () { location.reload(); });
+  </script>
+</body>
+</html>

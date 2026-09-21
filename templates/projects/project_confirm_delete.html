@@ -1,0 +1,35 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Delete Project — SGE{% endblock %}
+{% block page_title %}Delete Project{% endblock %}
+
+{% block content %}
+<div class="max-w-lg">
+  <div class="card border border-red-200">
+    <div class="flex items-start gap-4 mb-5">
+      <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-steel-800">Delete this project?</h2>
+        <p class="text-sm text-steel-500 mt-1">This action <strong>cannot be undone</strong>. All process stages, uploaded files, activity logs, and notifications for this project will be permanently deleted.</p>
+      </div>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-5">
+      <p class="text-sm font-semibold text-red-800">{{ project.project_name }}</p>
+      <p class="text-xs text-red-600 mt-0.5">{{ project.project_code }} · Client: {{ project.client.get_full_name|default:project.client.username }}</p>
+    </div>
+
+    <form method="post" class="flex gap-3">
+      {% csrf_token %}
+      <button type="submit"
+              class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors">
+        Yes, delete project
+      </button>
+      <a href="{% url 'project_detail' project.pk %}" class="btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

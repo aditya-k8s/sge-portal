@@ -1,0 +1,147 @@
+{% extends "website/base_public.html" %}
+{% block title %}Services — Shri Gouri Engineers{% endblock %}
+{% block content %}
+
+<section class="bg-steel-900 py-20">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <p class="text-orange-500 text-sm font-semibold uppercase tracking-widest mb-3">What We Do</p>
+    <h1 class="font-display font-bold text-5xl text-white mb-4">Our Services</h1>
+    <p class="text-steel-400 max-w-2xl mx-auto text-lg">End-to-end precision machining services — from raw material to finished component.</p>
+  </div>
+</section>
+
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    {% if services %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% for service in services %}
+      <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col" id="service-{{ service.pk }}">
+
+        <!-- Full-cover image or dark header -->
+        {% if service.image %}
+        <div class="h-56 overflow-hidden flex-shrink-0">
+          <img src="{{ service.image.url }}" alt="{{ service.title }}"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        </div>
+        {% else %}
+        <div class="h-56 bg-gradient-to-br from-steel-800 to-steel-900 flex-shrink-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-orange-500 bg-opacity-20 rounded-2xl mx-auto mb-3 flex items-center justify-center border border-orange-500 border-opacity-30">
+              <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <p class="text-steel-300 font-display font-bold text-lg">{{ service.title }}</p>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Content -->
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="font-display font-bold text-xl text-steel-900 mb-2">{{ service.title }}</h3>
+
+          {% if service.description %}
+          <p class="text-sm text-steel-600 leading-relaxed mb-4">{{ service.description|truncatechars:120 }}</p>
+          {% endif %}
+
+          {% if service.features_list %}
+          <ul class="space-y-1.5 mb-5 flex-1">
+            {% for feature in service.features_list|slice:":4" %}
+            <li class="flex items-start gap-2 text-sm text-steel-600">
+              <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
+              {{ feature }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="flex-1"></div>
+          {% endif %}
+
+          <!-- Read More button -->
+          <div class="mt-4 pt-4 border-t border-gray-100" x-data="{ open: false }">
+            {% if service.description and service.description|length > 120 or service.features_list|length > 4 %}
+            <button @click="open = !open"
+                    class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
+              <span x-text="open ? 'Show Less' : 'Read More'">Read More</span>
+              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div x-show="open" x-cloak x-transition class="mt-4 pt-4 border-t border-gray-100 space-y-3">
+              {% if service.description and service.description|length > 120 %}
+              <p class="text-sm text-steel-600 leading-relaxed">{{ service.description }}</p>
+              {% endif %}
+              {% if service.features_list|length > 4 %}
+              <ul class="space-y-1.5">
+                {% for feature in service.features_list %}
+                <li class="flex items-start gap-2 text-sm text-steel-600">
+                  <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
+                  {{ feature }}
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </div>
+            {% else %}
+            <a href="{% url 'contact' %}"
+               class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
+              Get a Quote
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Fallback hardcoded services -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% for s in default_services %}
+      <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col">
+        <div class="h-56 bg-gradient-to-br from-steel-800 to-steel-900 flex-shrink-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="text-5xl mb-3">{{ s.icon }}</div>
+            <p class="text-steel-300 font-display font-bold text-lg">{{ s.title }}</p>
+          </div>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="font-display font-bold text-xl text-steel-900 mb-2">{{ s.title }}</h3>
+          <p class="text-sm text-steel-600 leading-relaxed mb-4">{{ s.desc }}</p>
+          <ul class="space-y-1.5 flex-1">
+            {% for f in s.features %}
+            <li class="flex items-start gap-2 text-sm text-steel-600">
+              <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>{{ f }}
+            </li>
+            {% endfor %}
+          </ul>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <a href="{% url 'contact' %}"
+               class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
+              Get a Quote
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-16 bg-steel-50 text-center">
+  <div class="max-w-3xl mx-auto px-4">
+    <h2 class="font-display font-bold text-3xl text-steel-900 mb-3">Have a machining requirement?</h2>
+    <p class="text-steel-500 mb-6">Share your drawings and we'll provide a competitive quote within 24 hours.</p>
+    <a href="{% url 'contact' %}"
+       class="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-colors text-lg">
+      Request a Quote
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

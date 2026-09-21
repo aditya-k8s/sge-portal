@@ -1,0 +1,54 @@
+# Runtime dependencies. Pinned so a deploy cannot pick up a surprise upgrade.
+#
+# Install with:  pip install -r requirements.txt
+
+# -- Framework ----------------------------------------------------------------
+# Django is pinned to 5.2 because django-mongodb-backend tracks Django's
+# version line exactly: the 5.2.x backend supports Django 5.2 and nothing else.
+Django==5.2.17
+djangorestframework==3.18.1
+asgiref==3.12.1
+sqlparse==0.6.0
+tzdata==2026.4
+
+# -- Database driver ----------------------------------------------------------
+# MongoDB is the default engine (DB_ENGINE=mongodb). The backend is MongoDB's
+# own Django integration; pymongo is its driver and dnspython is what resolves
+# a mongodb+srv:// connection string's SRV records.
+django-mongodb-backend==5.2.4
+pymongo==4.18.1
+dnspython==2.8.0
+
+# To use MySQL instead, set DB_ENGINE=mysql in .env and add:
+# PyMySQL==1.1.1          # registered as MySQLdb in config/__init__.py
+# cryptography==46.0.5    # required by PyMySQL for caching_sha2_password
+#
+# To use PostgreSQL instead, set DB_ENGINE=postgresql in .env and add:
+# psycopg[binary]==3.2.3
+
+# -- Forms and UI -------------------------------------------------------------
+django-crispy-forms==2.7
+crispy-tailwind==1.0.3
+
+# -- Progressive Web App ------------------------------------------------------
+# Provides the serviceworker.js and offline routes. The project overrides its
+# pwa.html, manifest.json and offline.html templates -- see templates/pwa.html
+# for why -- and serves the manifest from apps/core/views.py.
+django-pwa==2.0.1
+
+# -- Files, static assets and documents ---------------------------------------
+whitenoise==6.12.0
+pillow==12.3.0         # image handling for machine and portfolio uploads
+reportlab==5.0.1       # invoice and timeline PDF generation
+
+# -- Serving ------------------------------------------------------------------
+gunicorn==26.2.0
+
+# -- Supporting ---------------------------------------------------------------
+charset-normalizer==3.5.1
+
+# Removed: django-cors-headers==4.9.0
+# It was installed but never added to INSTALLED_APPS or MIDDLEWARE, so it had
+# no effect. The API is same-origin and session-authenticated; add it back
+# (with the middleware wired up) only if a separate front-end origin is
+# introduced.

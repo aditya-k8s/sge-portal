@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Login — Shri Gouri Engineers{% endblock %}
+{% block body %}
+
+<div class="min-h-screen bg-steel-900 flex">
+
+  <!-- Left branding panel -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-steel-900 via-steel-800 to-orange-900 relative overflow-hidden flex-col justify-between p-12">
+    <!-- Decorative grid -->
+    <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+    <div class="relative">
+      <div class="flex items-center gap-3 mb-12">
+        <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-display font-bold text-2xl text-white tracking-wider">SHRI GOURI</p>
+          <p class="text-xs text-steel-400 tracking-widest uppercase">Engineers</p>
+        </div>
+      </div>
+
+      <h2 class="font-display font-bold text-4xl text-white leading-tight mb-4">
+        Track Your<br>
+        <span class="text-orange-400">Manufacturing</span><br>
+        Projects
+      </h2>
+      <p class="text-steel-400 text-sm leading-relaxed max-w-sm">
+        Log in to view real-time progress updates on your CNC, VMC, and precision machining orders. From material receipt to final quality check — all in one place.
+      </p>
+    </div>
+
+    <div class="relative grid grid-cols-2 gap-4">
+      <div class="bg-white bg-opacity-5 rounded-xl p-4 border border-white border-opacity-10">
+        <p class="text-orange-400 text-2xl font-bold font-display">CNC</p>
+        <p class="text-steel-400 text-xs mt-1">Precision Machining</p>
+      </div>
+      <div class="bg-white bg-opacity-5 rounded-xl p-4 border border-white border-opacity-10">
+        <p class="text-orange-400 text-2xl font-bold font-display">VMC</p>
+        <p class="text-steel-400 text-xs mt-1">Vertical Machining</p>
+      </div>
+      <div class="bg-white bg-opacity-5 rounded-xl p-4 border border-white border-opacity-10">
+        <p class="text-orange-400 text-2xl font-bold font-display">BMC</p>
+        <p class="text-steel-400 text-xs mt-1">Bed Milling Centre</p>
+      </div>
+      <div class="bg-white bg-opacity-5 rounded-xl p-4 border border-white border-opacity-10">
+        <p class="text-orange-400 text-2xl font-bold font-display">ISO</p>
+        <p class="text-steel-400 text-xs mt-1">Quality Assured</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right login form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+    <div class="w-full max-w-md">
+      <!-- Mobile logo -->
+      <div class="lg:hidden flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35"/>
+          </svg>
+        </div>
+        <p class="font-display font-bold text-xl text-steel-800">SHRI GOURI ENGINEERS</p>
+      </div>
+
+      <h1 class="text-2xl font-bold text-steel-900 mb-1">Welcome back</h1>
+      <p class="text-sm text-steel-500 mb-8">Sign in to access your project dashboard</p>
+
+      {% if messages %}
+        {% for message in messages %}
+        <div class="mb-4 px-4 py-3 rounded-lg text-sm
+          {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200
+          {% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <p class="mt-1 text-xs text-red-600">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-steel-700 mb-1.5">Password</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <p class="mt-1 text-xs text-red-600">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div class="flex justify-end mb-1">
+          <a href="{% url 'forgot_password' %}" class="text-xs text-orange-600 hover:underline">Forgot password?</a>
+        </div>
+        <button type="submit"
+                class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors text-sm">
+          Sign In
+        </button>
+      </form>
+
+      <div class="mt-6 pt-5 border-t border-gray-100">
+        <p class="text-center text-xs text-steel-400 mb-3">New to Shri Gouri Engineers?</p>
+        <a href="{% url 'register' %}"
+           class="w-full flex items-center justify-center gap-2 py-3 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-bold rounded-xl transition-colors text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+          Create a Client Account
+        </a>
+      </div>
+
+      <div class="mt-5 text-center">
+        <a href="{% url 'home' %}" class="text-sm text-steel-400 hover:text-steel-600 transition-colors">
+          ← Back to website
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

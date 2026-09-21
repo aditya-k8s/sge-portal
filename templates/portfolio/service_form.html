@@ -1,0 +1,91 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}{{ title }} — SGE{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+  <a href="{% url 'service_list' %}" class="inline-flex items-center gap-1.5 text-sm text-steel-500 hover:text-steel-700 mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to Services
+  </a>
+
+  <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+    <!-- Form header -->
+    <div class="px-6 py-5 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-steel-800">{% if service %}Edit Service{% else %}New Service{% endif %}</h2>
+      <p class="text-xs text-steel-400 mt-0.5">Fill in the details below. Changes appear on the public Services page instantly.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="px-6 py-6 space-y-6">
+      {% csrf_token %}
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-semibold text-steel-700 mb-1.5">Service Title <span class="text-red-400">*</span></label>
+        {{ form.title }}
+        {% if form.title.errors %}<p class="text-xs text-red-500 mt-1">{{ form.title.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-semibold text-steel-700 mb-1.5">Description</label>
+        {{ form.description }}
+        <p class="text-xs text-steel-400 mt-1">Shown on the Services page below the title.</p>
+      </div>
+
+      <!-- Features -->
+      <div>
+        <label class="block text-sm font-semibold text-steel-700 mb-1.5">Features / Bullet Points</label>
+        {{ form.features }}
+        <p class="text-xs text-steel-400 mt-1">One feature per line — shown as ✓ checkmarks on the website.</p>
+      </div>
+
+      <!-- Order + Visibility row -->
+      <div class="grid grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Display Order</label>
+          {{ form.order }}
+          <p class="text-xs text-steel-400 mt-1">Lower number = shown first</p>
+        </div>
+        <div class="flex flex-col justify-end pb-1">
+          <label class="flex items-center gap-2.5 cursor-pointer">
+            {{ form.is_active }}
+            <span class="text-sm text-steel-700 font-medium">Visible on public website</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Image -->
+      <div>
+        <label class="block text-sm font-semibold text-steel-700 mb-1.5">Service Image <span class="text-steel-400 font-normal">(optional)</span></label>
+        {% if service and service.image %}
+        <div class="mb-3 relative group w-full h-40 rounded-xl overflow-hidden border border-gray-200">
+          <img src="{{ service.image.url }}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span class="text-white text-xs font-medium">Click below to replace</span>
+          </div>
+        </div>
+        {% endif %}
+        <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-orange-400 transition-colors">
+          {{ form.image }}
+        </div>
+        <p class="text-xs text-steel-400 mt-1">If uploaded, displays as a banner image on the service card.</p>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="submit"
+                class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          {% if service %}Save Changes{% else %}Add Service{% endif %}
+        </button>
+        <a href="{% url 'service_list' %}"
+           class="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

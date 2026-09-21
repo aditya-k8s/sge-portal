@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- PUBLIC NAV — centered links -->
+<nav class="bg-steel-900 text-white sticky top-0 z-50 shadow-lg" x-data="{ open: false }">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center h-16 gap-6">
+
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class="flex items-center gap-3 flex-shrink-0">
+        <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-display font-bold text-base leading-tight tracking-wide">SHRI GOURI</p>
+          <p class="text-xs text-steel-400 leading-tight tracking-widest uppercase">Engineers</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav — centered -->
+      <div class="hidden md:flex flex-1 items-center justify-center gap-1">
+        <a href="{% url 'home' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">Home</a>
+        <a href="{% url 'about' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">About</a>
+        <a href="{% url 'our_work' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">Our Work</a>
+        <a href="{% url 'services' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">Services</a>
+        <a href="{% url 'industries' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">Industries</a>
+        <a href="{% url 'contact' %}" class="px-3 py-2 text-sm font-medium text-steel-300 hover:text-white hover:bg-steel-700 rounded-md transition-colors">Contact</a>
+      </div>
+
+      <!-- CTA buttons -->
+      <div class="hidden md:flex items-center gap-3 flex-shrink-0">
+        <!-- Shown by app.js only when the browser reports the app as
+             installable, so visitors never see a button that cannot work. -->
+        <button type="button" data-install-trigger hidden
+                class="items-center gap-1.5 px-3 py-2 border border-steel-600 hover:border-orange-500 text-steel-300 hover:text-white text-sm font-medium rounded-lg transition-colors inline-flex">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/>
+          </svg>
+          Install App
+        </button>
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">Dashboard</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="px-4 py-2 border border-steel-600 hover:border-orange-500 text-steel-300 hover:text-white text-sm font-medium rounded-lg transition-colors">Client Login</a>
+          <a href="{% url 'contact' %}" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">Get Quote</a>
+        {% endif %}
+      </div>
+
+      <!-- Mobile menu button -->
+      <button @click="open = !open" class="md:hidden ml-auto p-2 rounded-md text-steel-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div x-show="open" x-cloak class="md:hidden bg-steel-800 px-4 pb-4 space-y-1">
+    <a href="{% url 'home' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">Home</a>
+    <a href="{% url 'about' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">About</a>
+    <a href="{% url 'our_work' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">Our Work</a>
+    <a href="{% url 'services' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">Services</a>
+    <a href="{% url 'industries' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">Industries</a>
+    <a href="{% url 'contact' %}" class="block px-3 py-2 text-sm text-steel-300 hover:text-white rounded-md">Contact</a>
+    <hr class="border-steel-700 my-2">
+    <button type="button" data-install-trigger hidden
+            class="w-full text-left px-3 py-2 text-sm text-orange-400 font-medium rounded-md">
+      Install App
+    </button>
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="block px-3 py-2 text-sm text-orange-400 font-medium rounded-md">Dashboard</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="block px-3 py-2 text-sm text-orange-400 font-medium rounded-md">Client Login</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Flash messages -->
+{% if messages %}
+<div class="max-w-7xl mx-auto px-4 pt-4">
+  {% for message in messages %}
+  <div class="mb-2 px-4 py-3 rounded-lg text-sm font-medium
+    {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200
+    {% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200
+    {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+<footer class="bg-steel-900 text-steel-300 mt-20">
+  <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="md:col-span-2">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-display font-bold text-white text-lg">SHRI GOURI ENGINEERS</p>
+          <p class="text-xs text-steel-500 tracking-widest uppercase">Precision Manufacturing</p>
+        </div>
+      </div>
+      <p class="text-sm leading-relaxed text-steel-400 max-w-md">Delivering precision CNC and VMC machined components for automotive, industrial, and manufacturing sectors.</p>
+    </div>
+    <div>
+      <h3 class="text-white font-semibold mb-3 text-sm tracking-wide uppercase">Quick Links</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="{% url 'about' %}" class="hover:text-orange-400 transition-colors">About Us</a></li>
+        <li><a href="{% url 'services' %}" class="hover:text-orange-400 transition-colors">Services</a></li>
+        <li><a href="{% url 'our_work' %}" class="hover:text-orange-400 transition-colors">Our Work</a></li>
+        <li><a href="{% url 'industries' %}" class="hover:text-orange-400 transition-colors">Industries</a></li>
+        <li><a href="{% url 'contact' %}" class="hover:text-orange-400 transition-colors">Contact Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-white font-semibold mb-3 text-sm tracking-wide uppercase">Contact</h3>
+      <ul class="space-y-2 text-sm text-steel-400">
+        <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">📍</span> Industrial Area, Pune, Maharashtra</li>
+        <li class="flex items-start gap-2"><span class="text-orange-500">📞</span> +91-XXXXXXXXXX</li>
+        <li class="flex items-start gap-2"><span class="text-orange-500">✉️</span> info@shrigouriengineers.com</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-steel-800 py-4 text-center text-xs text-steel-600">
+    © {% now "Y" %} Shri Gouri Engineers. All rights reserved.
+  </div>
+</footer>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Machines — SGE{% endblock %}
+{% block page_title %}Machines{% endblock %}
+{% block page_subtitle %}Manufacturing equipment inventory{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-wrap gap-3 mb-6">
+  <a href="{% url 'machine_create' %}"
+     class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    Add Machine
+  </a>
+
+  <form method="get" class="flex items-center gap-2 flex-1 min-w-[16rem]" data-no-loading>
+    <label class="sr-only" for="machine-search">Search machines</label>
+    <input type="search" id="machine-search" name="search" value="{{ search }}"
+           placeholder="Search by machine name" class="form-input flex-1">
+    <button type="submit" class="btn-secondary">Search</button>
+    {% if search %}
+    <a href="{% url 'machine_list' %}" class="text-xs text-steel-500 hover:text-orange-600 whitespace-nowrap">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {% for machine in machines %}
+  <div class="card hover:shadow-md transition-shadow">
+    <div class="w-full h-36 bg-gradient-to-br from-steel-700 to-steel-900 rounded-xl mb-4 flex items-center justify-center">
+      <div class="text-center">
+        <span class="font-display font-bold text-orange-400 text-2xl">{{ machine.machine_type }}</span>
+        <p class="text-steel-400 text-xs mt-1">{{ machine.get_machine_type_display }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-start justify-between mb-2">
+      <div>
+        <p class="font-semibold text-steel-800">{{ machine.machine_name }}</p>
+        {% if machine.manufacturer %}<p class="text-xs text-steel-400 mt-0.5">{{ machine.manufacturer }}</p>{% endif %}
+        {% if machine.model_number %}<p class="text-xs text-steel-400">Model: {{ machine.model_number }}</p>{% endif %}
+      </div>
+      <span class="text-xs px-2 py-0.5 rounded-full flex-shrink-0 ml-2
+                   {% if machine.is_active %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-600{% endif %}">
+        {% if machine.is_active %}Active{% else %}Inactive{% endif %}
+      </span>
+    </div>
+
+    {% if machine.description %}
+    <p class="text-xs text-steel-500 mb-3 line-clamp-2">{{ machine.description }}</p>
+    {% endif %}
+
+    <!-- Action buttons inside the card -->
+    <div class="flex gap-2 pt-3 border-t border-gray-100 mt-3">
+      <a href="{% url 'machine_edit' machine.pk %}"
+         class="flex-1 text-center py-2 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-steel-700">
+        <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        Edit
+      </a>
+      <a href="{% url 'machine_delete' machine.pk %}"
+         class="flex-1 text-center py-2 text-xs font-medium border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-red-600">
+        <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        Delete
+      </a>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-span-4 card text-center py-16">
+    <svg class="w-12 h-12 text-steel-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+    </svg>
+    <p class="text-steel-400 text-sm">No machines added yet.</p>
+    <a href="{% url 'machine_create' %}" class="btn-primary mt-4 inline-flex">Add First Machine</a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

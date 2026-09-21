@@ -1,0 +1,104 @@
+{% load static %}
+{% load pwa %}
+
+<!DOCTYPE html>
+<html lang="en-GB" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <!-- viewport-fit=cover so the layout reaches under a phone's notch when
+       running as an installed app. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <title>{% block title %}{{ COMPANY_NAME }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Precision CNC and VMC machining | {{ COMPANY_NAME }}{% endblock %}">
+
+  <!-- Manifest, icons, theme colour and service worker registration. This
+       emits templates/pwa.html, which overrides django-pwa's version so the
+       URLs respect the app's mount path. It also renders the theme-color
+       meta tag, so there is no separate one here. -->
+  {% progressive_web_app_meta %}
+
+  <link rel="icon" type="image/png" href="{% static 'icons/favicon.png' %}">
+
+  <!-- Tailwind utilities -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            steel: {
+              50:  '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Barlow Condensed', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Alpine JS -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Component styles. Previously these lived in an inline <style> block
+       using @apply, which the Tailwind CDN cannot compile outside a
+       text/tailwindcss block, so none of them applied. -->
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-steel-50 font-sans text-steel-800 antialiased">
+
+  <div id="sge-progress" aria-hidden="true"></div>
+
+  <!-- Shown by app.js whenever the browser reports no connection. -->
+  <div id="sge-offline-notice" hidden
+       class="bg-steel-800 text-white text-xs text-center py-2 px-4"
+       role="status">
+    You are offline. Pages and data will load again once you reconnect.
+  </div>
+
+  {% block body %}{% endblock %}
+
+  <!-- Host for the install banner. app.js only builds it once Chrome has
+       confirmed the app is installable. -->
+  <div id="sge-install-root"
+       data-app-name="{{ PWA_APP_SHORT_NAME }}"
+       data-icon="{% static 'icons/icon-192x192.png' %}"></div>
+
+  <script src="{% static 'js/app.js' %}" defer></script>
+
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="flex h-screen overflow-hidden bg-steel-50" x-data="{ sidebarOpen: false }">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+       class="fixed inset-0 z-20 bg-black bg-opacity-50 md:hidden"></div>
+
+  <!-- Sidebar -->
+  <aside class="fixed inset-y-0 left-0 z-30 w-64 bg-steel-900 text-white flex flex-col transform transition-transform duration-300
+                md:relative md:translate-x-0"
+         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-steel-700">
+      <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="font-display font-bold text-base leading-tight tracking-wide">SHRI GOURI</p>
+        <p class="text-xs text-steel-400 leading-tight">Engineers</p>
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="px-5 py-4 border-b border-steel-700">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border-2 border-steel-600">
+          {% if request.user.profile_image %}
+            <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.get_full_name }}" class="w-full h-full object-cover" id="sidebar-avatar-img">
+          {% else %}
+            <div class="w-full h-full bg-orange-500 flex items-center justify-center text-sm font-bold text-white">
+              {{ request.user.get_full_name|first|upper|default:request.user.username|first|upper }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="min-w-0">
+          <p class="text-sm font-semibold text-white truncate">{{ request.user.get_full_name|default:request.user.username }}</p>
+          <p class="text-xs text-steel-400 capitalize">{{ request.user.role }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav Links -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <a href="{% url 'dashboard' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if request.resolver_match.url_name == 'dashboard' %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="{% url 'project_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'project' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Projects
+      </a>
+
+      {% if request.user.is_admin_user %}
+      <a href="{% url 'machine_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'machine' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35"/>
+        </svg>
+        Machines
+      </a>
+
+      <a href="{% url 'client_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'client' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Clients
+      </a>
+      {% endif %}
+
+      {% if request.user.is_admin_user %}
+      <a href="{% url 'work_sample_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'work_sample' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Our Work
+      </a>
+
+      <a href="{% url 'service_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'service' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Services
+      </a>
+      <a href="{% url 'field_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'field' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        Form Fields
+      </a>
+      <a href="{% url 'process_template_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'process_template' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        Process Stages
+      </a>
+      {% endif %}
+
+      {% if request.user.is_admin_user %}
+      <a href="{% url 'enquiry_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'enquiry' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <span class="flex-1">Enquiries</span>
+        {% if new_enquiry_count %}
+        <span class="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full ml-auto">
+          {{ new_enquiry_count }}
+        </span>
+        {% endif %}
+      </a>
+      <a href="{% url 'analytics' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'analytics' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Analytics
+      </a>
+      {% endif %}
+      <a href="{% url 'notification_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'notification' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <span class="relative flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+          {% if unread_notification_count %}
+          <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{{ unread_notification_count }}</span>
+          {% endif %}
+        </span>
+        Notifications
+        {% if unread_notification_count %}
+        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{{ unread_notification_count }}</span>
+        {% endif %}
+      </a>
+    </nav>
+
+    <!-- Bottom Links -->
+    <div class="px-3 py-4 border-t border-steel-700 space-y-1">
+      <!-- Revealed by app.js only once the browser confirms the app can be
+           installed, so it is never a button that does nothing. -->
+      <button type="button" data-install-trigger hidden
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-orange-600 text-white hover:bg-orange-700 transition-colors">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/>
+        </svg>
+        Install App
+      </button>
+      <a href="{% url 'profile' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-steel-300 hover:bg-steel-700 hover:text-white transition-colors">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        Profile
+      </a>
+      <a href="{% url 'home' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-steel-300 hover:bg-steel-700 hover:text-white transition-colors">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/>
+        </svg>
+        Public Site
+      </a>
+      <a href="{% url 'logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-steel-400 hover:bg-red-900 hover:text-red-300 transition-colors">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4 flex-shrink-0">
+      <button @click="sidebarOpen = true" class="md:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+      <div class="flex-1">
+        <h1 class="text-lg font-semibold text-steel-800">{% block page_title %}Dashboard{% endblock %}</h1>
+        {% if block.super %}{% endif %}
+        <p class="text-xs text-steel-400">{% block page_subtitle %}{% endblock %}</p>
+      </div>
+
+      <!-- Topbar Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Notifications Bell -->
+        <div class="relative" x-data="{ open: false }">
+          <button @click="open = !open" class="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            {% if unread_notification_count %}
+            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            {% endif %}
+          </button>
+
+          <div x-show="open" x-cloak @click.away="open = false"
+               class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+              <span class="text-sm font-semibold text-steel-700">Notifications</span>
+              {% if request.user.is_admin_user %}
+      <a href="{% url 'work_sample_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'work_sample' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Our Work
+      </a>
+
+      <a href="{% url 'service_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'service' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Services
+      </a>
+      <a href="{% url 'field_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'field' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        Form Fields
+      </a>
+      <a href="{% url 'process_template_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'process_template' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        Process Stages
+      </a>
+      {% endif %}
+
+      {% if request.user.is_admin_user %}
+      <a href="{% url 'enquiry_list' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'enquiry' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <span class="flex-1">Enquiries</span>
+        {% if new_enquiry_count %}
+        <span class="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full ml-auto">
+          {{ new_enquiry_count }}
+        </span>
+        {% endif %}
+      </a>
+      <a href="{% url 'analytics' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                {% if 'analytics' in request.resolver_match.url_name %}bg-orange-600 text-white{% else %}text-steel-300 hover:bg-steel-700 hover:text-white{% endif %}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Analytics
+      </a>
+      {% endif %}
+      <a href="{% url 'notification_list' %}" class="text-xs text-orange-600 hover:underline">View all</a>
+            </div>
+            <div class="max-h-72 overflow-y-auto divide-y divide-gray-50">
+              {% for n in recent_notifications %}
+              <div class="px-4 py-3 {% if not n.is_read %}bg-orange-50{% endif %} hover:bg-gray-50 transition-colors">
+                <p class="text-xs text-steel-700 leading-relaxed">{{ n.message }}</p>
+                <p class="text-xs text-steel-400 mt-1">{{ n.created_at|timesince }} ago</p>
+              </div>
+              {% empty %}
+              <div class="px-4 py-6 text-center text-sm text-steel-400">No notifications yet.</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- User Avatar Dropdown -->
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+          <button @click="open = !open"
+                  class="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+            <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 hover:ring-orange-400 transition-all">
+              {% if request.user.profile_image %}
+                <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.get_full_name }}"
+                     class="w-full h-full object-cover" id="topbar-avatar-img">
+              {% else %}
+                <div class="w-full h-full bg-orange-500 flex items-center justify-center text-white text-sm font-bold">
+                  {{ request.user.get_full_name|first|upper|default:request.user.username|first|upper }}
+                </div>
+              {% endif %}
+            </div>
+            <span class="hidden sm:block text-sm font-semibold text-steel-700">
+              {{ request.user.get_full_name|default:request.user.username }}
+            </span>
+            <svg class="w-3.5 h-3.5 text-steel-400 transition-transform" :class="open ? 'rotate-180' : ''"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown menu -->
+          <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+               x-transition:leave="transition ease-in duration-75"
+               x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+               class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 z-50 overflow-hidden">
+
+            <!-- User info header -->
+            <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-orange-200 flex-shrink-0">
+                  {% if request.user.profile_image %}
+                    <img src="{{ request.user.profile_image.url }}" class="w-full h-full object-cover">
+                  {% else %}
+                    <div class="w-full h-full bg-orange-500 flex items-center justify-center text-white font-bold">
+                      {{ request.user.get_full_name|first|upper|default:request.user.username|first|upper }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-steel-800 truncate">
+                    {{ request.user.get_full_name|default:request.user.username }}
+                  </p>
+                  <p class="text-xs text-steel-400 capitalize truncate">
+                    {{ request.user.role }} · {{ request.user.email }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Menu items -->
+            <div class="py-1">
+              <a href="{% url 'profile' %}"
+                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-steel-700 hover:bg-orange-50 hover:text-orange-700 transition-colors">
+                <svg class="w-4 h-4 text-steel-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                My Profile
+              </a>
+              <a href="{% url 'change_password' %}"
+                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-steel-700 hover:bg-orange-50 hover:text-orange-700 transition-colors">
+                <svg class="w-4 h-4 text-steel-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+                Change Password
+              </a>
+              <a href="{% url 'notification_list' %}"
+                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-steel-700 hover:bg-orange-50 hover:text-orange-700 transition-colors">
+                <svg class="w-4 h-4 text-steel-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                Notifications
+                {% if unread_notification_count %}
+                <span class="ml-auto bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                  {{ unread_notification_count }}
+                </span>
+                {% endif %}
+              </a>
+              <a href="{% url 'home' %}" target="_blank"
+                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-steel-700 hover:bg-orange-50 hover:text-orange-700 transition-colors">
+                <svg class="w-4 h-4 text-steel-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                View Public Site
+              </a>
+            </div>
+
+            <!-- Logout -->
+            <div class="border-t border-gray-100 py-1">
+              <a href="{% url 'logout' %}"
+                 class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="px-4 md:px-6 pt-4">
+      {% for message in messages %}
+      <div class="mb-2 px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-between
+        {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200
+        {% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200
+        {% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-800 border border-yellow-200
+        {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-6">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+</div>
+
+{% block extra_scripts %}{% endblock %}
+{% endblock %}

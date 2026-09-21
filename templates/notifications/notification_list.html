@@ -1,0 +1,55 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Notifications — SGE{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-between items-center mb-5">
+  <p class="text-sm text-steel-500">
+    {{ page_obj.paginator.count }} notification{{ page_obj.paginator.count|pluralize }}
+  </p>
+  {% if notifications %}
+  <form method="post" action="{% url 'mark_all_read' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn-secondary text-xs">Mark all as read</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="space-y-2">
+  {% for notif in notifications %}
+  <div class="card py-4 flex items-start gap-4 {% if not notif.is_read %}border-l-4 border-l-orange-500{% endif %}">
+    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
+                {% if not notif.is_read %}bg-orange-100{% else %}bg-gray-100{% endif %}">
+      <svg class="w-4 h-4 {% if not notif.is_read %}text-orange-600{% else %}text-gray-400{% endif %}"
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm text-steel-700 {% if not notif.is_read %}font-medium{% endif %}">{{ notif.message }}</p>
+      <div class="flex items-center gap-3 mt-1">
+        <p class="text-xs text-steel-400">{{ notif.created_at|date:"d M Y, H:i" }} · {{ notif.created_at|timesince }} ago</p>
+        {% if notif.project %}
+        <a href="{% url 'project_detail' notif.project.pk %}" class="text-xs text-orange-600 hover:underline">View project →</a>
+        {% endif %}
+      </div>
+    </div>
+    {% if not notif.is_read %}
+    <div class="flex-shrink-0">
+      <div class="w-2 h-2 bg-orange-500 rounded-full mt-1.5"></div>
+    </div>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="card text-center py-16">
+    <svg class="w-12 h-12 text-steel-200 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+    </svg>
+    <p class="text-steel-400 text-sm">No notifications yet.</p>
+  </div>
+  {% endfor %}
+  {% include "partials/pagination.html" %}
+</div>
+
+{% endblock %}

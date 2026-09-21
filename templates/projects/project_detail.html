@@ -1,0 +1,555 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}{{ project.project_name }} — SGE{% endblock %}
+{% block page_title %}{{ project.project_name }}{% endblock %}
+{% block page_subtitle %}{{ project.project_code }} · {{ project.get_status_display }}{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-wrap items-center gap-3 mb-6">
+  <a href="{% url 'project_list' %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-steel-600 text-sm font-medium rounded-lg transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to Projects
+  </a>
+  {% if request.user.is_admin_user %}
+  <a href="{% url 'project_edit' project.pk %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    Edit Project
+  </a>
+  <a href="{% url 'project_delete' project.pk %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-red-300 hover:bg-red-50 text-red-600 text-sm font-semibold rounded-lg transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    Delete
+  </a>
+  {% endif %}
+
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+  <!-- Left Column -->
+  <div class="xl:col-span-2 space-y-5">
+
+    <!-- Project Info Card -->
+    <div class="card">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-steel-800">{{ project.project_name }}</h2>
+          <p class="text-sm text-steel-400 mt-0.5">{{ project.project_code }}</p>
+        </div>
+        <span class="badge-{{ project.status }} text-sm px-3 py-1">{{ project.get_status_display }}</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Client</p>
+          <p class="font-medium text-steel-700">{{ project.client.get_full_name|default:project.client.username }}</p>
+          {% if project.client.company_name %}
+          <p class="text-xs text-steel-400">{{ project.client.company_name }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Machine</p>
+          <p class="font-medium text-steel-700">{{ project.machine.machine_name|default:"—" }}</p>
+          {% if project.machine %}
+          <p class="text-xs text-steel-400">{{ project.machine.get_machine_type_display }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Quantity</p>
+          <p class="font-medium text-steel-700">{{ project.quantity }}</p>
+        </div>
+        {% if project.material %}
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Material</p>
+          <p class="font-medium text-steel-700">{{ project.material }}</p>
+        </div>
+        {% endif %}
+        {% if project.start_date %}
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Start Date</p>
+          <p class="font-medium text-steel-700">{{ project.start_date|date:"d M Y" }}</p>
+        </div>
+        {% endif %}
+        {% if project.expected_delivery %}
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Expected Delivery</p>
+          <p class="font-medium text-steel-700">{{ project.expected_delivery|date:"d M Y" }}</p>
+        </div>
+        {% endif %}
+        {% if project.completed_date %}
+        <div>
+          <p class="text-xs text-steel-400 uppercase tracking-wide mb-0.5">Completed</p>
+          <p class="font-medium text-green-600">{{ project.completed_date|date:"d M Y" }}</p>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if project.description %}
+      <div class="mt-4 pt-4 border-t border-gray-100">
+        <p class="text-xs text-steel-400 uppercase tracking-wide mb-1">Description</p>
+        <p class="text-sm text-steel-600">{{ project.description }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold text-steel-700">Overall Progress</h3>
+        <span class="text-2xl font-bold font-display text-orange-500" id="progress-pct">{{ project.progress_percentage }}%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+        <div id="progress-bar" class="h-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-500"
+             style="width: {{ project.progress_percentage }}%"></div>
+      </div>
+      <p class="text-xs text-steel-400">
+        {{ project.processes.filter.completed_count|default:0 }} of {{ processes|length }} stages completed
+      </p>
+    </div>
+
+    <!-- Manufacturing Process Timeline -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-sm font-semibold text-steel-700">Manufacturing Process</h3>
+        {% if request.user.is_admin_user %}
+        <p class="text-xs text-steel-400">Click status to update</p>
+        {% endif %}
+      </div>
+
+      <!-- Add Stage form (admin only) -->
+      {% if request.user.is_admin_user %}
+      <form method="post" action="{% url 'project_add_process' project.pk %}" class="flex gap-2 mb-4">
+        {% csrf_token %}
+        <input type="text" name="process_name" placeholder="Add new stage name..."
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+        <button type="submit"
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Stage
+        </button>
+      </form>
+      {% endif %}
+
+      <div class="space-y-3" id="process-list">
+        {% for process in processes %}
+        <div class="flex items-start gap-4 p-3 rounded-lg border transition-all
+                    {% if process.status == 'completed' %}border-green-200 bg-green-50
+                    {% elif process.status == 'in_progress' %}border-orange-200 bg-orange-50
+                    {% elif process.status == 'skipped' %}border-gray-200 bg-gray-50 opacity-60
+                    {% else %}border-gray-100 bg-white{% endif %}"
+             id="process-row-{{ process.pk }}">
+
+          <!-- Status Icon -->
+          <div class="flex-shrink-0 mt-0.5">
+            {% if process.status == 'completed' %}
+              <div class="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+            {% elif process.status == 'in_progress' %}
+              <div class="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 bg-white rounded-full animate-pulse"></div>
+              </div>
+            {% elif process.status == 'skipped' %}
+              <div class="w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                </svg>
+              </div>
+            {% else %}
+              <div class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm font-medium text-steel-800">{{ process.process_name }}</p>
+              {% if request.user.is_admin_user %}
+              <div class="flex items-center gap-2">
+                <select onchange="updateProcess({{ project.pk }}, {{ process.pk }}, this.value)"
+                        class="text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+                        id="select-{{ process.pk }}">
+                  {% for val, label in process.STATUS_CHOICES %}
+                  <option value="{{ val }}" {% if process.status == val %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                <form method="post" action="{% url 'project_delete_process' project.pk process.pk %}"
+                      onsubmit="return confirm('Delete stage '{{ process.process_name }}'?')">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors" title="Delete stage">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </form>
+              </div>
+              {% else %}
+              <span class="text-xs text-steel-500 capitalize">{{ process.get_status_display }}</span>
+              {% endif %}
+            </div>
+            {% if process.notes %}
+            <p class="text-xs text-steel-500 mt-1">{{ process.notes }}</p>
+            {% endif %}
+            {% if process.completed_at %}
+            <p class="text-xs text-steel-400 mt-1">Completed: {{ process.completed_at|date:"d M Y, H:i" }}</p>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-sm text-steel-400 text-center py-4">No process stages defined yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Column -->
+  <div class="space-y-5">
+
+    <!-- Files -->
+    <div class="card p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-steel-700">Files & Drawings</h3>
+      </div>
+
+      <div class="divide-y divide-gray-50">
+        {% for file in files %}
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <a href="{{ file.file.url }}" target="_blank" class="text-xs font-medium text-steel-700 hover:text-orange-600 truncate block">
+                {{ file.file_name|default:file.file.name }}
+              </a>
+              <p class="text-xs text-steel-400">{{ file.get_file_type_display }} · {{ file.uploaded_at|date:"d M Y" }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <a href="{{ file.file.url }}" download class="p-1.5 text-steel-400 hover:text-orange-600 rounded-md hover:bg-orange-50 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </a>
+            {% if request.user.is_admin_user %}
+            <form method="post" action="{% url 'delete_file' project.pk file.pk %}"
+                  onsubmit="return confirm('Delete this file? This cannot be undone.')" class="inline">
+              {% csrf_token %}
+              <button type="submit" aria-label="Delete file"
+                      class="p-1.5 text-steel-400 hover:text-red-600 rounded-md hover:bg-red-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <div class="px-4 py-6 text-center text-sm text-steel-400">No files uploaded yet.</div>
+        {% endfor %}
+      </div>
+
+      <!-- Upload Form -->
+      <div class="px-4 py-4 border-t border-gray-100 bg-gray-50">
+        <form method="post" action="{% url 'upload_file' project.pk %}" enctype="multipart/form-data" class="space-y-2">
+          {% csrf_token %}
+          <p class="text-xs font-medium text-steel-600 mb-2">Upload File</p>
+          <div>
+            {{ file_form.file_type }}
+          </div>
+          <div>
+            <input type="text" name="file_name" placeholder="File name (optional)"
+                   class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500">
+          </div>
+          <div>
+            <input type="file" name="file" required
+                   class="w-full text-xs text-steel-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-orange-100 file:text-orange-700 hover:file:bg-orange-200">
+          </div>
+          <button type="submit" class="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold rounded-lg transition-colors">
+            Upload
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bills & Invoices -->
+    <div class="card p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-steel-700">Bills & Invoices</h3>
+      </div>
+
+      <div class="divide-y divide-gray-50">
+        {% for bill in project.bills.all %}
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <a href="{{ bill.file.url }}" target="_blank" class="text-xs font-medium text-steel-700 hover:text-orange-600 truncate block">
+                {{ bill.file_name }}
+              </a>
+              <p class="text-xs text-steel-400">
+                {% if bill.amount %}₹{{ bill.amount }} · {% endif %}{{ bill.uploaded_at|date:"d M Y" }}
+              </p>
+              {% if bill.notes %}<p class="text-xs text-steel-400">{{ bill.notes }}</p>{% endif %}
+            </div>
+          </div>
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <a href="{% url 'download_invoice' project.pk bill.pk %}"
+               class="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs font-medium rounded-md transition-colors" title="Download PDF Invoice">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              PDF
+            </a>
+            {% if bill.file %}
+            <a href="{{ bill.file.url }}" download class="p-1.5 text-steel-400 hover:text-green-600 rounded-md hover:bg-green-50 transition-colors" title="Download original file">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+            </a>
+            {% endif %}
+            {% if request.user.is_admin_user %}
+            <form method="post" action="{% url 'delete_bill' project.pk bill.pk %}"
+                  onsubmit="return confirm('Delete this bill? This cannot be undone.')" class="inline">
+              {% csrf_token %}
+              <button type="submit" aria-label="Delete bill"
+                      class="p-1.5 text-steel-400 hover:text-red-600 rounded-md hover:bg-red-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <div class="px-4 py-5 text-center text-xs text-steel-400">No bills uploaded yet.</div>
+        {% endfor %}
+      </div>
+
+      <!-- Upload bill form (admin only) -->
+      {% if request.user.is_admin_user %}
+      <div class="px-4 py-4 border-t border-gray-100 bg-gray-50" x-data="{open: false}">
+        <button @click="open=!open" class="w-full flex items-center justify-between text-xs font-semibold text-steel-600 mb-2">
+          <span>+ Create GST Invoice / Upload Bill</span>
+          <svg class="w-4 h-4 transition-transform" :class="open?'rotate-180':''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div x-show="open" x-cloak>
+        <form method="post" action="{% url 'upload_bill' project.pk %}" enctype="multipart/form-data" class="space-y-2 mt-2">
+          {% csrf_token %}
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" name="invoice_number" placeholder="Invoice No (auto if blank)"
+                   class="col-span-2 w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white">
+            <input type="number" name="amount" placeholder="Amount before GST (Rs.)" step="0.01"
+                   class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white">
+            <select name="gst_rate" class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white">
+              <option value="0">GST 0%</option>
+              <option value="5">GST 5%</option>
+              <option value="12">GST 12%</option>
+              <option value="18" selected>GST 18%</option>
+              <option value="28">GST 28%</option>
+            </select>
+            <input type="text" name="hsn_code" placeholder="HSN/SAC Code"
+                   class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white">
+            <input type="text" name="notes" placeholder="Notes"
+                   class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white">
+          </div>
+          <textarea name="description_of_work" rows="2" placeholder="Description of work (appears on invoice)"
+                    class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none bg-white"></textarea>
+          <input type="file" name="file" required
+                 accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx,.csv,.zip"
+                 class="w-full text-xs text-steel-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-green-100 file:text-green-700 hover:file:bg-green-200">
+          <p class="text-xs text-steel-400">Attach the invoice file (max {{ MAX_UPLOAD_SIZE_MB }} MB). A GST invoice PDF can be downloaded afterwards from the list above.</p>
+          <button type="submit" data-loading-label="Saving…"
+                  class="w-full py-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors">
+            Save Invoice
+          </button>
+        </form>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Client Rating (shown when project completed) -->
+    {% if project.status == 'completed' %}
+    <div class="card p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-semibold text-steel-700">Client Rating</h3>
+      </div>
+      <div class="px-5 py-4">
+        {% if project.rating %}
+        <!-- Show existing rating -->
+        <div class="text-center">
+          <div class="flex justify-center gap-1 mb-2">
+            {% for i in "12345" %}
+            <svg class="w-6 h-6 {% if forloop.counter <= project.rating.stars %}text-yellow-400{% else %}text-gray-200{% endif %}"
+                 fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            {% endfor %}
+          </div>
+          <p class="text-lg font-bold text-steel-800">{{ project.rating.stars }}/5</p>
+          {% if project.rating.review %}
+          <p class="text-sm text-steel-500 mt-2 italic">"{{ project.rating.review }}"</p>
+          {% endif %}
+          <p class="text-xs text-steel-400 mt-1">by {{ project.rating.client.get_full_name|default:project.rating.client.username }} · {{ project.rating.created_at|date:"d M Y" }}</p>
+        </div>
+        {% elif not request.user.is_admin_user and project.client == request.user %}
+        <!-- Rating form for client -->
+        <form method="post" action="{% url 'submit_rating' project.pk %}" x-data="{ stars: 0, hover: 0 }">
+          {% csrf_token %}
+          <p class="text-sm text-steel-600 mb-3 text-center">How was your experience?</p>
+          <div class="flex justify-center gap-2 mb-3">
+            {% for i in "12345" %}
+            <button type="button"
+                    @click="stars = {{ forloop.counter }}"
+                    @mouseover="hover = {{ forloop.counter }}"
+                    @mouseleave="hover = 0"
+                    class="transition-transform hover:scale-110">
+              <svg class="w-8 h-8 transition-colors"
+                   :class="(hover || stars) >= {{ forloop.counter }} ? 'text-yellow-400' : 'text-gray-200'"
+                   fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+            </button>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="stars" :value="stars">
+          <textarea name="review" rows="2" placeholder="Leave a comment (optional)"
+                    class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-500 resize-none mb-2"></textarea>
+          <button type="submit" :disabled="stars === 0"
+                  class="w-full py-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors">
+            Submit Rating
+          </button>
+        </form>
+        {% else %}
+        <p class="text-xs text-steel-400 text-center py-2">No rating submitted yet.</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Activity Log -->
+    <div class="card p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-semibold text-steel-700">Activity Log</h3>
+      </div>
+      <div class="divide-y divide-gray-50 max-h-72 overflow-y-auto">
+        {% for activity in activities %}
+        <div class="px-4 py-3">
+          <p class="text-xs text-steel-700">{{ activity.action }}</p>
+          <p class="text-xs text-steel-400 mt-0.5">
+            {% if activity.actor %}{{ activity.actor.get_full_name|default:activity.actor.username }} · {% endif %}
+            {{ activity.created_at|timesince }} ago
+          </p>
+        </div>
+        {% empty %}
+        <div class="px-4 py-6 text-center text-sm text-steel-400">No activity yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const csrfToken = '{{ csrf_token }}';
+
+// Resolved by Django rather than built by hand: the previous hardcoded
+// '/dashboard/projects/...' path ignored SCRIPT_PREFIX, so every stage update
+// posted to a 404 when the app was served under a sub-path.
+const updateProcessUrl = '{% url "update_process" project.pk %}';
+
+async function updateProcess(projectId, processId, newStatus) {
+  const row = document.getElementById(`process-row-${processId}`);
+  const controls = row ? row.querySelectorAll('button, select') : [];
+  controls.forEach((el) => { el.disabled = true; });
+
+  try {
+    const resp = await fetch(updateProcessUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify({ process_id: processId, status: newStatus }),
+    });
+
+    let data = {};
+    try {
+      data = await resp.json();
+    } catch (parseError) {
+      data = {};
+    }
+
+    // Anything other than success used to be discarded, so a refusal or a
+    // validation error looked exactly like nothing happening.
+    if (!resp.ok || !data.success) {
+      showToast(
+        data.error || data.detail ||
+        (resp.status === 403
+          ? 'Only administrators can change a stage.'
+          : 'The stage could not be updated. Please reload and try again.'),
+        'error'
+      );
+      return;
+    }
+
+    {
+      // Update progress bar
+      document.getElementById('progress-bar').style.width = data.progress + '%';
+      document.getElementById('progress-pct').textContent = data.progress + '%';
+
+      // Update row styling
+      row.className = row.className.replace(/border-\w+-\d+|bg-\w+-\d+|opacity-60/g, '');
+      if (newStatus === 'completed') {
+        row.classList.add('border-green-200', 'bg-green-50');
+      } else if (newStatus === 'in_progress') {
+        row.classList.add('border-orange-200', 'bg-orange-50');
+      } else if (newStatus === 'skipped') {
+        row.classList.add('border-gray-200', 'bg-gray-50', 'opacity-60');
+      } else {
+        row.classList.add('border-gray-100', 'bg-white');
+      }
+      // Show toast
+      showToast('Stage updated.', 'success');
+
+      // When the last stage completes the project status changes too, so
+      // reload to show the completed state and the rating form.
+      if (data.project_status === 'completed') {
+        showToast('Project completed. Reloading…', 'success');
+        window.setTimeout(() => window.location.reload(), 900);
+      }
+    }
+  } catch (e) {
+    showToast(
+      navigator.onLine
+        ? 'Update failed. Please try again.'
+        : 'You are offline. Reconnect and try again.',
+      'error'
+    );
+  } finally {
+    controls.forEach((el) => { el.disabled = false; });
+  }
+}
+
+function showToast(msg, type) {
+  const toast = document.createElement('div');
+  toast.setAttribute('role', 'status');
+  toast.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg text-sm font-medium shadow-lg z-50 transition-opacity duration-300
+    ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
+}
+</script>
+{% endblock %}

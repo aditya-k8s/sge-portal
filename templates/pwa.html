@@ -1,0 +1,64 @@
+{% comment %}
+Overrides django-pwa's bundled pwa.html.
+
+The packaged version hardcodes href="/manifest.json" and
+navigator.serviceWorker.register('/serviceworker.js'), which are root-absolute.
+Whenever the app is mounted on a sub-path (SCRIPT_PREFIX=/web) both URLs 404,
+no service worker registers, and Chrome never offers to install the app. Every
+URL here is built from PWA_APP_SCOPE instead, so it is correct at the domain
+root and under any prefix.
+{% endcomment %}
+<link rel="manifest" href="{{ PWA_APP_SCOPE }}manifest.json">
+
+<meta name="application-name" content="{{ PWA_APP_NAME }}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="{{ PWA_APP_THEME_COLOR }}">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{ PWA_APP_NAME }}">
+<meta name="apple-mobile-web-app-status-bar-style" content="{{ PWA_APP_STATUS_BAR_COLOR }}">
+{% for icon in PWA_APP_ICONS_APPLE %}
+<link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.sizes }}">
+{% endfor %}
+
+<meta name="msapplication-TileColor" content="{{ PWA_APP_THEME_COLOR }}">
+{% with PWA_APP_ICONS|last as icon %}
+<meta name="msapplication-TileImage" content="{{ icon.src }}">
+<link rel="icon" type="image/png" sizes="{{ icon.sizes }}" href="{{ icon.src }}">
+{% endwith %}
+
+<script>
+  (function () {
+    if (!('serviceWorker' in navigator)) {
+      return;
+    }
+    var scope = '{{ PWA_APP_SCOPE }}';
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register(scope + 'serviceworker.js', { scope: scope })
+        .then(function (registration) {
+          {% if PWA_APP_DEBUG_MODE %}
+          console.log('Service worker registered for scope', registration.scope);
+          {% endif %}
+
+          // When a new version is waiting, activate it rather than leaving
+          // the installed app running last week's assets indefinitely.
+          registration.addEventListener('updatefound', function () {
+            var incoming = registration.installing;
+            if (!incoming) {
+              return;
+            }
+            incoming.addEventListener('statechange', function () {
+              if (incoming.state === 'installed' && navigator.serviceWorker.controller) {
+                incoming.postMessage('SKIP_WAITING');
+              }
+            });
+          });
+        })
+        .catch(function (error) {
+          {% if PWA_APP_DEBUG_MODE %}
+          console.warn('Service worker registration failed:', error);
+          {% endif %}
+        });
+    });
+  })();
+</script>

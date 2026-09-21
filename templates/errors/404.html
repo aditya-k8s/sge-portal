@@ -1,0 +1,12 @@
+{% extends "errors/_shell.html" %}
+{% load static %}
+
+{% block title %}Page not found{% endblock %}
+{% block code %}Error 404{% endblock %}
+{% block heading %}That page does not exist{% endblock %}
+{% block message %}The page may have been moved or removed, or the link may be mistyped. Check the address, or start again from your dashboard.{% endblock %}
+{% block home_url %}{% url "home" %}{% endblock %}
+
+{% block extra_actions %}
+<a class="button secondary" href="{% url "dashboard" %}">Go to dashboard</a>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Projects — SGE{% endblock %}
+{% block page_title %}Projects{% endblock %}
+{% block page_subtitle %}{% if request.user.is_admin_user %}All manufacturing projects{% else %}Your projects{% endif %}{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-wrap items-center gap-3 mb-6">
+  {% if request.user.is_admin_user %}
+  <a href="{% url 'project_create' %}"
+     class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    New Project
+  </a>
+  {% endif %}
+
+  <form method="get" class="flex gap-2 flex-1 min-w-0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search projects..."
+           class="flex-1 min-w-0 px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+    <select name="status" class="px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+      <option value="">All Status</option>
+      {% for val, label in status_choices %}
+      <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="inline-flex items-center px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">Filter</button>
+    {% if search or status_filter %}
+    <a href="{% url 'project_list' %}" class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+  <div class="table-scroll">
+  <table class="w-full text-sm" style="min-width:640px">
+    <thead class="bg-gray-50 border-b border-gray-100">
+      <tr>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Project</th>
+        {% if request.user.is_admin_user %}
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Client</th>
+        {% endif %}
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Machine</th>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Status</th>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Progress</th>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold text-steel-500 uppercase tracking-wide">Delivery</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-50">
+      {% for project in projects %}
+      <tr class="hover:bg-orange-50 cursor-pointer transition-colors"
+          onclick="window.location='{% url 'project_detail' project.pk %}'">
+        <td class="px-5 py-4">
+          <p class="font-semibold text-steel-800 hover:text-orange-600 transition-colors">{{ project.project_name }}</p>
+          <p class="text-xs text-steel-400 mt-0.5">{{ project.project_code }}</p>
+        </td>
+        {% if request.user.is_admin_user %}
+        <td class="px-5 py-4 text-xs text-steel-600">
+          <p class="font-medium">{{ project.client.get_full_name|default:project.client.username }}</p>
+          <p class="text-steel-400">{{ project.client.company_name }}</p>
+        </td>
+        {% endif %}
+        <td class="px-5 py-4 text-xs text-steel-600">{{ project.machine.machine_name|default:"—" }}</td>
+        <td class="px-5 py-4">
+          <span class="badge-{{ project.status }}">{{ project.get_status_display }}</span>
+        </td>
+        <td class="px-5 py-4">
+          <div class="flex items-center gap-2">
+            <div class="w-20 bg-gray-200 rounded-full h-1.5">
+              <div class="h-1.5 rounded-full bg-orange-500" style="width: {{ project.progress_percentage }}%"></div>
+            </div>
+            <span class="text-xs text-steel-500">{{ project.progress_percentage }}%</span>
+          </div>
+        </td>
+        <td class="px-5 py-4 text-xs text-steel-500">
+          {% if project.expected_delivery %}{{ project.expected_delivery|date:"d M Y" }}{% else %}—{% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="px-5 py-14 text-center">
+          <div class="w-12 h-12 bg-gray-100 rounded-xl mx-auto mb-3 flex items-center justify-center">
+            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <p class="text-steel-500 font-medium text-sm">
+            {% if search or status_filter %}No projects match your search.{% else %}No projects found.{% endif %}
+          </p>
+          {% if request.user.is_admin_user and not search and not status_filter %}
+          <a href="{% url 'project_create' %}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Create First Project
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% include "partials/pagination.html" %}
+</div>
+{% endblock %}

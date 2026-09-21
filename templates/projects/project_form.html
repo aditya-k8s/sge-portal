@@ -1,0 +1,177 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}{{ title }} — SGE{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+  <a href="{% if project %}{% url 'project_detail' project.pk %}{% else %}{% url 'project_list' %}{% endif %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-steel-600 text-sm font-medium rounded-lg transition-colors mb-6">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    {% if project %}Back to Project{% else %}Back to Projects{% endif %}
+  </a>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-steel-800">{{ title }}</h2>
+      <p class="text-xs text-steel-400 mt-0.5">Fill in the project details below</p>
+    </div>
+
+    <form method="post" class="px-6 py-6 space-y-6">
+      {% csrf_token %}
+
+      <!-- Core fields -->
+      <div>
+        <h3 class="text-xs font-semibold text-steel-400 uppercase tracking-widest mb-4">Project Details</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Project Name <span class="text-red-400">*</span></label>
+            {{ form.project_name }}
+            {% if form.project_name.errors %}<p class="text-xs text-red-500 mt-1">{{ form.project_name.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Client <span class="text-red-400">*</span></label>
+            {{ form.client }}
+            {% if form.client.errors %}<p class="text-xs text-red-500 mt-1">{{ form.client.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Machine</label>
+            {{ form.machine }}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Status</label>
+            {{ form.status }}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Quantity</label>
+            {{ form.quantity }}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Material</label>
+            {{ form.material }}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Start Date</label>
+            {{ form.start_date }}
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Expected Delivery</label>
+            {{ form.expected_delivery }}
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Description</label>
+            {{ form.description }}
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">Internal Notes</label>
+            {{ form.notes }}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Custom Fields Section -->
+      {% if custom_fields %}
+      <div class="border-t border-gray-100 pt-6">
+        <h3 class="text-xs font-semibold text-steel-400 uppercase tracking-widest mb-4">Additional Details</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {% for field in custom_fields %}
+          <div {% if field.field_type == 'textarea' %}class="sm:col-span-2"{% endif %}>
+            <label class="block text-sm font-semibold text-steel-700 mb-1.5">
+              {{ field.label }}
+              {% if field.is_required %}<span class="text-red-400">*</span>{% endif %}
+            </label>
+
+            {% if field.field_type == 'text' %}
+              <input type="text" name="custom_{{ field.pk }}"
+                     value="{{ existing_values|default:''|default_if_none:'' }}{% for k,v in existing_values.items %}{% if k == field.pk %}{{ v }}{% endif %}{% endfor %}"
+                     placeholder="{{ field.placeholder }}"
+                     class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                     {% if field.is_required %}required{% endif %}>
+
+            {% elif field.field_type == 'number' %}
+              <input type="number" name="custom_{{ field.pk }}"
+                     value="{% for k,v in existing_values.items %}{% if k == field.pk %}{{ v }}{% endif %}{% endfor %}"
+                     placeholder="{{ field.placeholder }}"
+                     class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                     {% if field.is_required %}required{% endif %}>
+
+            {% elif field.field_type == 'textarea' %}
+              <textarea name="custom_{{ field.pk }}" rows="3"
+                        placeholder="{{ field.placeholder }}"
+                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white resize-none"
+                        {% if field.is_required %}required{% endif %}>{% for k,v in existing_values.items %}{% if k == field.pk %}{{ v }}{% endif %}{% endfor %}</textarea>
+
+            {% elif field.field_type == 'date' %}
+              <input type="date" name="custom_{{ field.pk }}"
+                     value="{% for k,v in existing_values.items %}{% if k == field.pk %}{{ v }}{% endif %}{% endfor %}"
+                     class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                     {% if field.is_required %}required{% endif %}>
+
+            {% elif field.field_type == 'select' %}
+              <select name="custom_{{ field.pk }}"
+                      class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                      {% if field.is_required %}required{% endif %}>
+                <option value="">{% if field.placeholder %}{{ field.placeholder }}{% else %}— Select —{% endif %}</option>
+                {% for opt in field.get_options_list %}
+                <option value="{{ opt }}"
+                  {% for k,v in existing_values.items %}{% if k == field.pk and v == opt %}selected{% endif %}{% endfor %}>
+                  {{ opt }}
+                </option>
+                {% endfor %}
+              </select>
+
+            {% elif field.field_type == 'checkbox' %}
+              <label class="flex items-center gap-3 cursor-pointer mt-1">
+                <input type="checkbox" name="custom_{{ field.pk }}" value="Yes"
+                       class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                       {% for k,v in existing_values.items %}{% if k == field.pk and v == 'Yes' %}checked{% endif %}{% endfor %}>
+                <span class="text-sm text-steel-700">{{ field.label }}</span>
+              </label>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Note about auto processes -->
+      {% if not project %}
+      <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-start gap-2">
+        <svg class="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="text-xs text-blue-700">Default manufacturing stages will be created automatically: <strong>Material Received → Cutting → Milling → Drilling → Heat Treatment → Finishing → Quality Check → Completed</strong></p>
+      </div>
+      {% endif %}
+
+      <!-- Action buttons -->
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button type="submit"
+                class="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          {% if project %}Save Changes{% else %}Create Project{% endif %}
+        </button>
+        <a href="{% if project %}{% url 'project_detail' project.pk %}{% else %}{% url 'project_list' %}{% endif %}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors">
+          Cancel
+        </a>
+        {% if custom_fields %}
+        <a href="{% url 'field_list' %}"
+           class="ml-auto inline-flex items-center gap-1.5 text-xs text-steel-400 hover:text-orange-600 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37"/></svg>
+          Manage form fields
+        </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

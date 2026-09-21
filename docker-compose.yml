@@ -1,0 +1,59 @@
+# Optional: a local MySQL 8 server plus the application, for anyone who would
+# rather not install MySQL directly. If MySQL is already running on the host
+# (it is on the original development machine), skip this file entirely and
+# follow the "Database setup" section of README.md instead.
+#
+#   docker compose up -d db          # database only, app run from the host
+#   docker compose up -d             # database and application
+#
+# Credentials come from .env; nothing is hardcoded here.
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-sge_portal}
+      MYSQL_USER: ${DB_USER:-sge_app}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD must be set in .env}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      # Exposed so MySQL Workbench or DBeaver on the host can connect.
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      # The app must not start migrating before MySQL is accepting queries.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      # Inside the compose network the database is reachable by service name,
+      # whatever DB_HOST says for host-based runs.
+      DB_HOST: db
+      DB_PORT: "3306"
+    ports:
+      - "8000:8000"
+    volumes:
+      # Uploaded files and logs outlive the container.
+      - ./media:/app/media
+      - ./logs:/app/logs
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+             --access-logfile - --error-logfile -"
+
+volumes:
+  mysql_data:

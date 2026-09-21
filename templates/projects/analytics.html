@@ -1,0 +1,162 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}Analytics — SGE{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block page_subtitle %}Business performance overview{% endblock %}
+
+{% block content %}
+
+<!-- KPI Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+    </div>
+    <p class="text-2xl font-bold text-steel-800">{{ stats.total_projects }}</p>
+    <p class="text-xs text-steel-500 mt-0.5">Total Projects</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center mb-3">
+      <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <p class="text-2xl font-bold text-steel-800">{{ stats.completed }}</p>
+    <p class="text-xs text-steel-500 mt-0.5">Completed</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center mb-3">
+      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    </div>
+    <p class="text-2xl font-bold text-steel-800">{{ stats.total_clients }}</p>
+    <p class="text-xs text-steel-500 mt-0.5">Total Clients</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <div class="w-9 h-9 bg-yellow-100 rounded-xl flex items-center justify-center mb-3">
+      <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <p class="text-2xl font-bold text-steel-800">Rs. {{ stats.total_revenue|floatformat:0 }}</p>
+    <p class="text-xs text-steel-500 mt-0.5">Total Revenue</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+
+  <!-- Monthly Projects Chart -->
+  <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <h3 class="text-sm font-semibold text-steel-700 mb-4">Projects Created — Last 6 Months</h3>
+    <div class="flex items-end gap-3 h-40">
+      {% for m in monthly_projects %}
+      <div class="flex-1 flex flex-col items-center gap-1">
+        <span class="text-xs text-steel-500 font-medium">{{ m.count }}</span>
+        <div class="w-full bg-orange-500 rounded-t-md transition-all hover:bg-orange-600"
+             style="height: {% if max_monthly > 0 %}{{ m.count|floatformat:0 }}{% else %}0{% endif %}px; min-height: {% if m.count > 0 %}4{% else %}0{% endif %}px; max-height: 120px;"
+             title="{{ m.label }}: {{ m.count }} projects">
+        </div>
+        <span class="text-xs text-steel-400">{{ m.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Project Status Breakdown -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <h3 class="text-sm font-semibold text-steel-700 mb-4">Project Status</h3>
+    <div class="space-y-3">
+      {% for s in status_breakdown %}
+      <div>
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-steel-600 font-medium">{{ s.label }}</span>
+          <span class="text-steel-500">{{ s.count }} ({{ s.pct }}%)</span>
+        </div>
+        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all" style="width: {{ s.pct }}%; background: {{ s.color }};"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4 pt-4 border-t border-gray-100">
+      <p class="text-xs text-steel-500">Completion Rate</p>
+      <p class="text-2xl font-bold text-green-600">{{ stats.completion_rate }}%</p>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+  <!-- Top Clients -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100">
+      <h3 class="text-sm font-semibold text-steel-700">Top Clients by Projects</h3>
+    </div>
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-steel-500 uppercase">#</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-steel-500 uppercase">Client</th>
+          <th class="px-4 py-3 text-center text-xs font-semibold text-steel-500 uppercase">Projects</th>
+          <th class="px-4 py-3 text-center text-xs font-semibold text-steel-500 uppercase">Completed</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for c in top_clients %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3 text-xs text-steel-400">{{ forloop.counter }}</td>
+          <td class="px-4 py-3">
+            <p class="text-xs font-semibold text-steel-800">{{ c.name }}</p>
+            <p class="text-xs text-steel-400">{{ c.company }}</p>
+          </td>
+          <td class="px-4 py-3 text-center text-xs font-bold text-steel-800">{{ c.total }}</td>
+          <td class="px-4 py-3 text-center text-xs font-bold text-green-600">{{ c.completed }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="px-4 py-8 text-center text-xs text-steel-400">No data yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recent Ratings + Revenue by Month -->
+  <div class="space-y-5">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-semibold text-steel-700">Client Ratings</h3>
+      </div>
+      <div class="px-5 py-4">
+        {% if avg_rating %}
+        <div class="flex items-center gap-3 mb-4">
+          <p class="text-4xl font-bold text-steel-800">{{ avg_rating }}</p>
+          <div>
+            <div class="flex gap-0.5">
+              {% for i in "12345" %}
+              <svg class="w-5 h-5 {% if forloop.counter <= avg_rating_int %}text-yellow-400{% else %}text-gray-200{% endif %}"
+                   fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+              {% endfor %}
+            </div>
+            <p class="text-xs text-steel-400 mt-0.5">from {{ total_ratings }} reviews</p>
+          </div>
+        </div>
+        {% for r in recent_ratings %}
+        <div class="border-t border-gray-50 pt-3 mt-3">
+          <div class="flex items-center justify-between mb-1">
+            <p class="text-xs font-semibold text-steel-700">{{ r.client.get_full_name|default:r.client.username }}</p>
+            <div class="flex gap-0.5">
+              {% for i in "12345" %}
+              <svg class="w-3.5 h-3.5 {% if forloop.counter <= r.stars %}text-yellow-400{% else %}text-gray-200{% endif %}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              {% endfor %}
+            </div>
+          </div>
+          {% if r.review %}<p class="text-xs text-steel-500 italic">"{{ r.review|truncatechars:80 }}"</p>{% endif %}
+          <p class="text-xs text-steel-400 mt-0.5">{{ r.project.project_name }}</p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-xs text-steel-400 text-center py-4">No ratings yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "website/base_public.html" %}
+{% block title %}Services — Shri Gouri Engineers{% endblock %}
+{% block content %}
+
+<section class="bg-steel-900 py-20">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <p class="text-orange-500 text-sm font-semibold uppercase tracking-widest mb-3">What We Do</p>
+    <h1 class="font-display font-bold text-5xl text-white mb-4">Our Services</h1>
+    <p class="text-steel-400 max-w-2xl mx-auto">End-to-end precision machining services — from raw material to finished component.</p>
+  </div>
+</section>
+
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    {% with services=''|center:0 %}
+    <!-- CNC Machining -->
+    <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-lg transition-shadow">
+      <div class="bg-gradient-to-br from-steel-800 to-steel-900 px-8 py-10">
+        <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-5">
+          <span class="font-display font-bold text-white text-lg">CNC</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-white mb-2">CNC Machining</h3>
+        <p class="text-steel-400 text-sm">Computer-controlled precision for complex geometries at consistent quality.</p>
+      </div>
+      <div class="px-8 py-6">
+        <ul class="space-y-2 text-sm text-steel-600">
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> 3-axis and 4-axis CNC turning and milling</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Complex profile machining</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Tolerances down to ±0.01mm</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Prototype to production volumes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- VMC Machining -->
+    <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-lg transition-shadow">
+      <div class="bg-gradient-to-br from-steel-800 to-steel-900 px-8 py-10">
+        <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-5">
+          <span class="font-display font-bold text-white text-lg">VMC</span>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-white mb-2">VMC Machining</h3>
+        <p class="text-steel-400 text-sm">Vertical machining centre operations for high-accuracy flat and prismatic parts.</p>
+      </div>
+      <div class="px-8 py-6">
+        <ul class="space-y-2 text-sm text-steel-600">
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Milling, boring, tapping operations</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> High surface finish requirements</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Large component handling</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Multi-feature machining in one setup</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Precision Engineering -->
+    <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-lg transition-shadow">
+      <div class="bg-gradient-to-br from-steel-800 to-steel-900 px-8 py-10">
+        <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-5">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-white mb-2">Precision Engineering</h3>
+        <p class="text-steel-400 text-sm">Close-tolerance components for critical applications.</p>
+      </div>
+      <div class="px-8 py-6">
+        <ul class="space-y-2 text-sm text-steel-600">
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Gear shafts, bushings, flanges</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Hydraulic and pneumatic components</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Assembly-ready finished parts</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Full inspection reports on request</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Custom Manufacturing -->
+    <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-lg transition-shadow">
+      <div class="bg-gradient-to-br from-steel-800 to-steel-900 px-8 py-10">
+        <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-5">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-2xl text-white mb-2">Custom Fabrication</h3>
+        <p class="text-steel-400 text-sm">From your drawing to a finished part — any geometry, any material.</p>
+      </div>
+      <div class="px-8 py-6">
+        <ul class="space-y-2 text-sm text-steel-600">
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Steel, stainless steel, aluminium, brass</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> One-off prototypes to batch production</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Heat treatment and surface finish options</li>
+          <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">✓</span> Drawing review and DFM feedback</li>
+        </ul>
+      </div>
+    </div>
+    {% endwith %}
+
+  </div>
+</section>
+
+<section class="py-16 bg-steel-50 text-center">
+  <div class="max-w-3xl mx-auto px-4">
+    <h2 class="font-display font-bold text-3xl text-steel-900 mb-3">Have a machining requirement?</h2>
+    <p class="text-steel-500 mb-6">Share your drawings or describe your part. We'll provide a quote within 24 hours.</p>
+    <a href="{% url 'contact' %}" class="btn-primary inline-flex text-lg px-8 py-4">Request a Quote</a>
+  </div>
+</section>
+
+{% endblock %}

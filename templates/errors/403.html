@@ -1,0 +1,12 @@
+{% extends "errors/_shell.html" %}
+{% load static %}
+
+{% block title %}Access denied{% endblock %}
+{% block code %}Error 403{% endblock %}
+{% block heading %}You do not have access to that page{% endblock %}
+{% block message %}Your account does not have permission to view this page. If you believe it should, please contact the administrator.{% endblock %}
+{% block home_url %}{% url "home" %}{% endblock %}
+
+{% block extra_actions %}
+<a class="button secondary" href="{% url "dashboard" %}">Go to dashboard</a>
+{% endblock %}

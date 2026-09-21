@@ -1,0 +1,277 @@
+{% extends "partials/base_dashboard.html" %}
+{% block title %}My Profile — SGE{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl space-y-5">
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+    <!-- Header — avatar + info + edit button -->
+    <div class="px-6 py-6 border-b border-gray-100 bg-gray-50 flex items-start gap-5">
+
+      <!-- Clickable avatar -->
+      <label for="id_profile_image" class="relative flex-shrink-0 cursor-pointer group" title="Click to change photo">
+        <div class="w-20 h-20 rounded-full overflow-hidden ring-2 ring-orange-200 group-hover:ring-orange-400 transition-all shadow-md">
+          {% if request.user.profile_image %}
+            <img src="{{ request.user.profile_image.url }}" alt="{{ request.user.get_full_name }}"
+                 class="w-full h-full object-cover" id="avatar-preview">
+          {% else %}
+            <div class="w-full h-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold" id="avatar-initials">
+              {{ request.user.get_full_name|first|upper|default:request.user.username|first|upper }}
+            </div>
+            <img src="" alt="" class="w-full h-full object-cover hidden" id="avatar-preview">
+          {% endif %}
+        </div>
+        <!-- Camera hover overlay -->
+        <div class="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-45 transition-all flex items-center justify-center pointer-events-none">
+          <svg class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <div class="hidden">{{ form.profile_image }}</div>
+      </label>
+
+      <!-- Name / role / email -->
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-xl text-steel-800">{{ request.user.get_full_name|default:request.user.username }}</p>
+        <p class="text-sm text-steel-400 capitalize">{{ request.user.role }}</p>
+        <p class="text-sm text-steel-500">{{ request.user.email }}</p>
+        <p class="text-xs text-steel-400 mt-1">Click photo to change</p>
+      </div>
+
+      <!-- Edit Profile button -->
+      <button type="button" id="edit-btn"
+              onclick="enterEditMode()"
+              class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-orange-500 hover:text-orange-600 text-steel-700 text-sm font-semibold rounded-lg transition-colors flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        Edit Profile
+      </button>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="profile-form" class="px-6 py-6">
+      {% csrf_token %}
+      <input type="file" name="profile_image" id="profile_image_submit" class="hidden" accept="image/*">
+
+      <!-- ── READ MODE ─────────────────────────────────────────────── -->
+      <div id="read-mode" class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">First Name</p>
+          <p class="text-steel-800 font-medium">{{ request.user.first_name|default:"—" }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Last Name</p>
+          <p class="text-steel-800 font-medium">{{ request.user.last_name|default:"—" }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Email Address</p>
+          <p class="text-steel-800 font-medium">{{ request.user.email|default:"—" }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Company Name</p>
+          <p class="text-steel-800 font-medium">{{ request.user.company_name|default:"—" }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Phone</p>
+          <p class="text-steel-800 font-medium">{{ request.user.phone|default:"—" }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Username</p>
+          <p class="text-steel-800 font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg inline-block border border-gray-100">{{ request.user.username }}</p>
+        </div>
+        {% if request.user.address %}
+        <div class="sm:col-span-2">
+          <p class="text-xs font-semibold text-steel-400 uppercase tracking-wide mb-1">Address</p>
+          <p class="text-steel-800 font-medium">{{ request.user.address }}</p>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- ── EDIT MODE (hidden by default) ─────────────────────────── -->
+      <div id="edit-mode" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">First Name</label>
+          <input type="text" name="first_name" id="f_first_name"
+                 value="{{ request.user.first_name }}"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                 placeholder="First name">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Last Name</label>
+          <input type="text" name="last_name" id="f_last_name"
+                 value="{{ request.user.last_name }}"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                 placeholder="Last name">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Email Address</label>
+          <input type="email" name="email" id="f_email"
+                 value="{{ request.user.email }}"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                 placeholder="Email address">
+          {% if form.email.errors %}<p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Company Name</label>
+          <input type="text" name="company_name" id="f_company"
+                 value="{{ request.user.company_name }}"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                 placeholder="Company name">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Phone</label>
+          <input type="text" name="phone" id="f_phone"
+                 value="{{ request.user.phone }}"
+                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                 placeholder="Phone number">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-semibold text-steel-700 mb-1.5">Address</label>
+          <textarea name="address" id="f_address" rows="3"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-steel-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 transition resize-none"
+                    placeholder="Your address">{{ request.user.address }}</textarea>
+        </div>
+
+        <!-- Save / Cancel buttons -->
+        <div class="sm:col-span-2 flex items-center gap-3 pt-2 border-t border-gray-100">
+          <button type="submit"
+                  class="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Save Changes
+          </button>
+          <button type="button" onclick="exitEditMode()"
+                  class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors">
+            Cancel
+          </button>
+          <span id="photo-hint" class="text-xs text-orange-600 font-medium hidden ml-1">
+            📷 New photo selected
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Photo-only save bar (shown when avatar changed but not in edit mode) -->
+      <div id="photo-save-bar" class="hidden items-center gap-3 pt-4 border-t border-gray-100 mt-4">
+        <button type="submit"
+                class="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Save Photo
+        </button>
+        <span class="text-xs text-orange-600 font-medium">📷 New photo selected — click to save</span>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Password Card -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-steel-800 text-sm">Password & Security</p>
+          <p class="text-xs text-steel-400">Update your login password</p>
+        </div>
+      </div>
+      <a href="{% url 'change_password' %}"
+         class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+        </svg>
+        Change Password
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let photoSelected = false;
+let inEditMode    = false;
+
+function enterEditMode() {
+  document.getElementById('read-mode').classList.add('hidden');
+  document.getElementById('edit-mode').classList.remove('hidden');
+  document.getElementById('edit-btn').classList.add('hidden');
+  // Hide photo-only save bar if showing
+  document.getElementById('photo-save-bar').classList.add('hidden');
+  document.getElementById('photo-save-bar').classList.remove('flex');
+  inEditMode = true;
+  // Show photo hint inside edit mode if already selected
+  if (photoSelected) document.getElementById('photo-hint').classList.remove('hidden');
+  // Focus first field
+  setTimeout(() => document.getElementById('f_first_name').focus(), 50);
+}
+
+function exitEditMode() {
+  document.getElementById('edit-mode').classList.add('hidden');
+  document.getElementById('read-mode').classList.remove('hidden');
+  document.getElementById('edit-btn').classList.remove('hidden');
+  inEditMode = false;
+  // If photo was selected, show the photo-only save bar
+  if (photoSelected) {
+    document.getElementById('photo-save-bar').classList.remove('hidden');
+    document.getElementById('photo-save-bar').classList.add('flex');
+  }
+}
+
+// Avatar file input
+const avatarInput = document.getElementById('id_profile_image');
+const formInput   = document.getElementById('profile_image_submit');
+
+if (avatarInput) {
+  avatarInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    photoSelected = true;
+
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      formInput.files = dt.files;
+    } catch(e) {
+      avatarInput.name = 'profile_image';
+    }
+
+    // Live preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const src = e.target.result;
+      const preview  = document.getElementById('avatar-preview');
+      const initials = document.getElementById('avatar-initials');
+      if (preview)  { preview.src = src; preview.classList.remove('hidden'); }
+      if (initials)   initials.classList.add('hidden');
+      const sb = document.querySelector('#sidebar-avatar-img');
+      const tb = document.querySelector('#topbar-avatar-img');
+      if (sb) sb.src = src;
+      if (tb) tb.src = src;
+    };
+    reader.readAsDataURL(file);
+
+    // Show hint or photo-only save bar depending on current mode
+    if (inEditMode) {
+      document.getElementById('photo-hint').classList.remove('hidden');
+    } else {
+      document.getElementById('photo-save-bar').classList.remove('hidden');
+      document.getElementById('photo-save-bar').classList.add('flex');
+    }
+  });
+}
+</script>
+{% endblock %}

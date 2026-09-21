@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Verify Email — Shri Gouri Engineers{% endblock %}
+{% block body %}
+<div class="min-h-screen bg-steel-900 flex items-center justify-center p-6">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-br from-orange-500 to-orange-600 px-8 py-8 text-center">
+      <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white mb-1">Check your email</h1>
+      <p class="text-orange-100 text-sm">We've sent a 6-digit code to</p>
+      <p class="text-white font-semibold mt-1">{{ email }}</p>
+    </div>
+
+    <div class="px-8 py-8">
+      {% if messages %}
+        {% for message in messages %}
+        <div class="mb-5 px-4 py-3 rounded-xl text-sm font-medium
+          {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200
+          {% elif message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200
+          {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      <p class="text-steel-500 text-sm mb-6 text-center">Enter the 6-digit code to verify your email and complete registration.</p>
+
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+
+        <!-- OTP input boxes -->
+        <div>
+          <label class="block text-sm font-semibold text-steel-700 mb-3 text-center">Verification Code</label>
+          <div class="flex justify-center gap-3" id="otp-boxes">
+            {% for i in "123456" %}
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
+                   class="otp-box w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all"
+                   autocomplete="off">
+            {% endfor %}
+          </div>
+          <input type="hidden" name="otp_code" id="otp-hidden">
+        </div>
+
+        <button type="submit" id="verify-btn"
+                class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+          Verify & Create Account
+        </button>
+      </form>
+
+      <div class="mt-6 text-center space-y-2">
+        <p class="text-xs text-steel-400">Didn't receive the code?</p>
+        <a href="{% url 'resend_otp' %}?purpose=registration"
+           class="text-sm text-orange-600 hover:underline font-medium">Resend Code</a>
+      </div>
+
+      <div class="mt-4 text-center">
+        <a href="{% url 'register' %}" class="text-xs text-steel-400 hover:text-steel-600">
+          ← Back to registration
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const boxes = document.querySelectorAll('.otp-box');
+const hidden = document.getElementById('otp-hidden');
+const btn = document.getElementById('verify-btn');
+
+boxes.forEach((box, idx) => {
+  box.addEventListener('input', e => {
+    // Only allow digits
+    box.value = box.value.replace(/\D/g, '');
+    if (box.value && idx < boxes.length - 1) boxes[idx + 1].focus();
+    updateHidden();
+  });
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !box.value && idx > 0) {
+      boxes[idx - 1].focus();
+      boxes[idx - 1].value = '';
+      updateHidden();
+    }
+  });
+  box.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    text.split('').forEach((ch, i) => { if (boxes[i]) boxes[i].value = ch; });
+    if (boxes[Math.min(text.length, 5)]) boxes[Math.min(text.length, 5)].focus();
+    updateHidden();
+  });
+});
+
+function updateHidden() {
+  const val = Array.from(boxes).map(b => b.value).join('');
+  hidden.value = val;
+  btn.disabled = val.length < 6;
+}
+
+// Disable button initially
+btn.disabled = true;
+boxes[0].focus();
+</script>
+{% endblock %}
