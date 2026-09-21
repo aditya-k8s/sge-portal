@@ -1,0 +1,54 @@
+{% comment %}
+Fallback service cards for the home page, shown while no Service records have
+been added in the dashboard. Matches the shape of the database-driven cards
+above it so the section never looks empty on a fresh installation.
+
+Icons are inline SVG rather than emoji: emoji render differently on every
+platform and read as informal, which is wrong for an engineering supplier.
+{% endcomment %}
+
+<article class="bracket neon-edge panel-light rounded-2xl p-7 reveal" data-tilt>
+  <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-5">01</p>
+  <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-5">
+    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/>
+      <path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h3 class="font-bold text-steel-900 mb-2">CNC Machining</h3>
+  <p class="text-sm text-steel-500 leading-relaxed">Computer-controlled turning and milling for complex geometries, repeatably.</p>
+</article>
+
+<article class="bracket neon-edge panel-light rounded-2xl p-7 reveal" data-tilt data-reveal-delay="80">
+  <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-5">02</p>
+  <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-5">
+    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 20h16M6 20V9l6-4 6 4v11" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 20v-5h4v5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h3 class="font-bold text-steel-900 mb-2">VMC Machining</h3>
+  <p class="text-sm text-steel-500 leading-relaxed">Vertical machining centre work for flat and prismatic components.</p>
+</article>
+
+<article class="bracket neon-edge panel-light rounded-2xl p-7 reveal" data-tilt data-reveal-delay="160">
+  <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-5">03</p>
+  <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-5">
+    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 12h4l3-7 4 14 3-7h4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h3 class="font-bold text-steel-900 mb-2">Precision Engineering</h3>
+  <p class="text-sm text-steel-500 leading-relaxed">Close-tolerance parts for critical applications, with inspection reports.</p>
+</article>
+
+<article class="bracket neon-edge panel-light rounded-2xl p-7 reveal" data-tilt data-reveal-delay="240">
+  <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-5">04</p>
+  <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center mb-5">
+    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 015.4-5.4l-2.5 2.5-1.4-1.4 2.5-2.5z" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h3 class="font-bold text-steel-900 mb-2">Custom Fabrication</h3>
+  <p class="text-sm text-steel-500 leading-relaxed">From your drawing to a finished part, in steel, stainless, aluminium or brass.</p>
+</article>

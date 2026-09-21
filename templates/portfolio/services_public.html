@@ -1,145 +1,226 @@
 {% extends "website/base_public.html" %}
-{% block title %}Services — Shri Gouri Engineers{% endblock %}
+{% block title %}Services — {{ COMPANY_NAME|default:"Shri Gouri Engineers" }}{% endblock %}
+{% block meta_description %}CNC and VMC machining, precision engineering and custom fabrication — from raw material to inspected, finished component.{% endblock %}
+
 {% block content %}
 
-<section class="bg-steel-900 py-20">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <p class="text-orange-500 text-sm font-semibold uppercase tracking-widest mb-3">What We Do</p>
-    <h1 class="font-display font-bold text-5xl text-white mb-4">Our Services</h1>
-    <p class="text-steel-400 max-w-2xl mx-auto text-lg">End-to-end precision machining services — from raw material to finished component.</p>
-  </div>
-</section>
+{% include "website/partials/_page_header.html" with eyebrow="Section 02 · Services" page_title="From raw bar to finished part" lead="End-to-end precision machining. Select a service to open its full specification." %}
 
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4">
-    {% if services %}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<section class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
+
+      {% if services %}
       {% for service in services %}
-      <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col" id="service-{{ service.pk }}">
+      <!-- One Alpine scope per card: the popup state is local, so a loop needs
+           no index bookkeeping, and x-effect locks the page behind it. -->
+      <div x-data="{ popup: false }"
+           x-effect="document.body.style.overflow = popup ? 'hidden' : ''">
 
-        <!-- Full-cover image or dark header -->
-        {% if service.image %}
-        <div class="h-56 overflow-hidden flex-shrink-0">
-          <img src="{{ service.image.url }}" alt="{{ service.title }}"
-               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-        </div>
-        {% else %}
-        <div class="h-56 bg-gradient-to-br from-steel-800 to-steel-900 flex-shrink-0 flex items-center justify-center">
-          <div class="text-center">
-            <div class="w-16 h-16 bg-orange-500 bg-opacity-20 rounded-2xl mx-auto mb-3 flex items-center justify-center border border-orange-500 border-opacity-30">
-              <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-            </div>
-            <p class="text-steel-300 font-display font-bold text-lg">{{ service.title }}</p>
+        <article id="service-{{ service.pk }}"
+                 class="group bracket neon-edge panel-light rounded-2xl overflow-hidden flex flex-col h-full reveal cursor-pointer"
+                 data-tilt
+                 data-reveal-delay="{{ forloop.counter0|add:forloop.counter0 }}0"
+                 @click="popup = true" @keydown.enter="popup = true"
+                 tabindex="0" role="button" aria-haspopup="dialog"
+                 aria-label="Open the full specification for {{ service.title }}">
+
+          {% if service.image %}
+          <div class="h-52 overflow-hidden flex-shrink-0 bg-steel-100">
+            <img src="{{ service.image.url }}" alt="{{ service.title }}" loading="lazy"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
           </div>
-        </div>
-        {% endif %}
-
-        <!-- Content -->
-        <div class="p-6 flex flex-col flex-1">
-          <h3 class="font-display font-bold text-xl text-steel-900 mb-2">{{ service.title }}</h3>
-
-          {% if service.description %}
-          <p class="text-sm text-steel-600 leading-relaxed mb-4">{{ service.description|truncatechars:120 }}</p>
-          {% endif %}
-
-          {% if service.features_list %}
-          <ul class="space-y-1.5 mb-5 flex-1">
-            {% for feature in service.features_list|slice:":4" %}
-            <li class="flex items-start gap-2 text-sm text-steel-600">
-              <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
-              {{ feature }}
-            </li>
-            {% endfor %}
-          </ul>
           {% else %}
-          <div class="flex-1"></div>
+          <div class="h-52 bp-grid flex-shrink-0 flex items-center justify-center">
+            <span class="readout text-sm text-signal-400 tracking-[0.25em] uppercase">{{ service.title|truncatechars:24 }}</span>
+          </div>
           {% endif %}
 
-          <!-- Read More button -->
-          <div class="mt-4 pt-4 border-t border-gray-100" x-data="{ open: false }">
-            {% if service.description and service.description|length > 120 or service.features_list|length > 4 %}
-            <button @click="open = !open"
-                    class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
-              <span x-text="open ? 'Show Less' : 'Read More'">Read More</span>
-              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          <div class="p-7 flex flex-col flex-1">
+            <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-3">{{ forloop.counter|stringformat:"02d" }}</p>
+            <h2 class="font-display font-bold text-2xl text-steel-900 mb-3 tracking-wide">{{ service.title }}</h2>
+
+            {% if service.description %}
+            <p class="text-sm text-steel-600 leading-relaxed mb-5">{{ service.description|truncatechars:120 }}</p>
+            {% endif %}
+
+            {% if service.features_list %}
+            <ul class="space-y-2.5 mb-6 flex-1">
+              {% for feature in service.features_list|slice:":3" %}
+              <li class="flex items-start gap-2.5 text-sm text-steel-600">
+                <svg class="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                </svg>
+                <span>{{ feature }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="flex-1"></div>
+            {% endif %}
+
+            <p class="readout text-[0.625rem] text-brand-600 uppercase tracking-[0.2em] flex items-center gap-2 pt-5 border-t border-steel-200">
+              Full specification
+              <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </p>
+          </div>
+        </article>
+
+        <!-- POPUP -->
+        <div x-show="popup" x-cloak class="popup-backdrop"
+             x-transition:enter="popup-enter" x-transition:enter-start="popup-enter-start" x-transition:enter-end="popup-enter-end"
+             x-transition:leave="popup-leave" x-transition:leave-start="popup-leave-start" x-transition:leave-end="popup-leave-end"
+             @click.self="popup = false" @keydown.escape.window="popup = false"
+             role="dialog" aria-modal="true" aria-label="{{ service.title }}">
+
+          <div class="popup-panel popup-panel--dark"
+               x-transition:enter="panel-enter" x-transition:enter-start="panel-enter-start" x-transition:enter-end="panel-enter-end"
+               x-transition:leave="panel-leave" x-transition:leave-start="panel-leave-start" x-transition:leave-end="panel-leave-end">
+
+            <button type="button" class="popup-close" @click="popup = false">
+              <span class="sr-only">Close</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>
-            <div x-show="open" x-cloak x-transition class="mt-4 pt-4 border-t border-gray-100 space-y-3">
-              {% if service.description and service.description|length > 120 %}
-              <p class="text-sm text-steel-600 leading-relaxed">{{ service.description }}</p>
+
+            <div class="bp-grid px-8 sm:px-12 pt-12 pb-10">
+              <p class="tech-label mb-5">Service {{ forloop.counter|stringformat:"02d" }}</p>
+              <h3 class="font-display font-bold text-4xl text-white tracking-wide">{{ service.title }}</h3>
+            </div>
+
+            <div class="px-8 sm:px-12 py-10">
+              {% if service.description %}
+              <p class="text-steel-300 leading-relaxed mb-9">{{ service.description|linebreaksbr }}</p>
               {% endif %}
-              {% if service.features_list|length > 4 %}
-              <ul class="space-y-1.5">
+
+              {% if service.features_list %}
+              <p class="readout text-[0.625rem] text-signal-400 uppercase tracking-[0.2em] mb-5">What it covers</p>
+              <ul class="grid sm:grid-cols-2 gap-3.5 mb-10">
                 {% for feature in service.features_list %}
-                <li class="flex items-start gap-2 text-sm text-steel-600">
-                  <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
-                  {{ feature }}
+                <li class="flex items-start gap-3 text-sm text-steel-300 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                  <svg class="w-4 h-4 text-signal-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                  </svg>
+                  <span>{{ feature }}</span>
                 </li>
                 {% endfor %}
               </ul>
               {% endif %}
-            </div>
-            {% else %}
-            <a href="{% url 'contact' %}"
-               class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
-              Get a Quote
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
 
-    {% else %}
-    <!-- Fallback hardcoded services -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {% for s in default_services %}
-      <div class="rounded-2xl border border-steel-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col">
-        <div class="h-56 bg-gradient-to-br from-steel-800 to-steel-900 flex-shrink-0 flex items-center justify-center">
-          <div class="text-center">
-            <div class="text-5xl mb-3">{{ s.icon }}</div>
-            <p class="text-steel-300 font-display font-bold text-lg">{{ s.title }}</p>
-          </div>
-        </div>
-        <div class="p-6 flex flex-col flex-1">
-          <h3 class="font-display font-bold text-xl text-steel-900 mb-2">{{ s.title }}</h3>
-          <p class="text-sm text-steel-600 leading-relaxed mb-4">{{ s.desc }}</p>
-          <ul class="space-y-1.5 flex-1">
-            {% for f in s.features %}
-            <li class="flex items-start gap-2 text-sm text-steel-600">
-              <span class="text-orange-500 flex-shrink-0 mt-0.5 font-bold">✓</span>{{ f }}
-            </li>
-            {% endfor %}
-          </ul>
-          <div class="mt-4 pt-4 border-t border-gray-100">
-            <a href="{% url 'contact' %}"
-               class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-steel-900 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl transition-colors">
-              Get a Quote
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'contact' %}" class="btn-cta flex-1">Get a quote for this</a>
+                <button type="button" class="btn-ghost flex-1" @click="popup = false">Close</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       {% endfor %}
+
+      {% else %}
+      <!-- Shown until services are added in the dashboard. -->
+      {% for s in default_services %}
+      <div x-data="{ popup: false }"
+           x-effect="document.body.style.overflow = popup ? 'hidden' : ''">
+
+        <article class="group bracket neon-edge panel-light rounded-2xl overflow-hidden flex flex-col h-full reveal cursor-pointer"
+                 data-tilt
+                 data-reveal-delay="{{ forloop.counter0|add:forloop.counter0 }}0"
+                 @click="popup = true" @keydown.enter="popup = true"
+                 tabindex="0" role="button" aria-haspopup="dialog"
+                 aria-label="Open the full specification for {{ s.title }}">
+          <div class="h-52 bp-grid flex-shrink-0 flex items-center justify-center">
+            <span class="readout text-sm text-signal-400 tracking-[0.25em] uppercase">{{ s.title }}</span>
+          </div>
+          <div class="p-7 flex flex-col flex-1">
+            <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-3">{{ forloop.counter|stringformat:"02d" }}</p>
+            <h2 class="font-display font-bold text-2xl text-steel-900 mb-3 tracking-wide">{{ s.title }}</h2>
+            <p class="text-sm text-steel-600 leading-relaxed mb-5">{{ s.desc }}</p>
+            <ul class="space-y-2.5 flex-1 mb-6">
+              {% for f in s.features|slice:":3" %}
+              <li class="flex items-start gap-2.5 text-sm text-steel-600">
+                <svg class="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                </svg>
+                <span>{{ f }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+            <p class="readout text-[0.625rem] text-brand-600 uppercase tracking-[0.2em] flex items-center gap-2 pt-5 border-t border-steel-200">
+              Full specification
+              <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </p>
+          </div>
+        </article>
+
+        <div x-show="popup" x-cloak class="popup-backdrop"
+             x-transition:enter="popup-enter" x-transition:enter-start="popup-enter-start" x-transition:enter-end="popup-enter-end"
+             x-transition:leave="popup-leave" x-transition:leave-start="popup-leave-start" x-transition:leave-end="popup-leave-end"
+             @click.self="popup = false" @keydown.escape.window="popup = false"
+             role="dialog" aria-modal="true" aria-label="{{ s.title }}">
+          <div class="popup-panel popup-panel--dark"
+               x-transition:enter="panel-enter" x-transition:enter-start="panel-enter-start" x-transition:enter-end="panel-enter-end"
+               x-transition:leave="panel-leave" x-transition:leave-start="panel-leave-start" x-transition:leave-end="panel-leave-end">
+            <button type="button" class="popup-close" @click="popup = false">
+              <span class="sr-only">Close</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+            <div class="bp-grid px-8 sm:px-12 pt-12 pb-10">
+              <p class="tech-label mb-5">Service {{ forloop.counter|stringformat:"02d" }}</p>
+              <h3 class="font-display font-bold text-4xl text-white tracking-wide">{{ s.title }}</h3>
+            </div>
+            <div class="px-8 sm:px-12 py-10">
+              <p class="text-steel-300 leading-relaxed mb-9">{{ s.desc }}</p>
+              <p class="readout text-[0.625rem] text-signal-400 uppercase tracking-[0.2em] mb-5">What it covers</p>
+              <ul class="grid sm:grid-cols-2 gap-3.5 mb-10">
+                {% for f in s.features %}
+                <li class="flex items-start gap-3 text-sm text-steel-300 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                  <svg class="w-4 h-4 text-signal-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                  </svg>
+                  <span>{{ f }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'contact' %}" class="btn-cta flex-1">Get a quote for this</a>
+                <button type="button" class="btn-ghost flex-1" @click="popup = false">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+
     </div>
-    {% endif %}
   </div>
 </section>
 
-<section class="py-16 bg-steel-50 text-center">
-  <div class="max-w-3xl mx-auto px-4">
-    <h2 class="font-display font-bold text-3xl text-steel-900 mb-3">Have a machining requirement?</h2>
-    <p class="text-steel-500 mb-6">Share your drawings and we'll provide a competitive quote within 24 hours.</p>
-    <a href="{% url 'contact' %}"
-       class="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-colors text-lg">
-      Request a Quote
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+<!-- ================================================================ CTA === -->
+<section class="bp-grid spotlight relative overflow-hidden py-20">
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="tech-label justify-center mb-6 reveal">Enquiries</p>
+    <h2 class="font-display font-bold text-4xl text-white mb-4 reveal" data-reveal-delay="80">Have a machining requirement?</h2>
+    <p class="text-steel-400 leading-relaxed mb-9 reveal" data-reveal-delay="160">
+      Share your drawings with the quantity and material, and we will come back
+      with a quotation.
+    </p>
+    <a href="{% url 'contact' %}" class="btn-cta reveal" data-reveal-delay="240">
+      Request a quotation
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+      </svg>
     </a>
   </div>
 </section>

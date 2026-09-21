@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path, register_converter
+from django.urls import include, path, re_path, register_converter
 
 from apps.core import views as core_views
 from apps.core.converters import PrimaryKeyConverter
@@ -48,7 +48,18 @@ handler403 = 'apps.core.views.permission_denied'
 handler404 = 'apps.core.views.page_not_found'
 handler500 = 'apps.core.views.server_error'
 
+# Uploaded media. On MongoDB the files are in GridFS, where no web server can
+# reach them, so this route is the only way to read one and must exist in
+# production too -- the old DEBUG-only static() helper meant every media URL
+# 404'd once deployed. The view checks who may read drawings and invoices.
+urlpatterns += [
+    re_path(
+        r'^' + settings.MEDIA_URL.lstrip('/') + r'(?P<path>.*)$',
+        core_views.serve_media,
+        name='media',
+    ),
+]
+
 if settings.DEBUG:
-    # In production these are served by the web server or WhiteNoise.
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # Static files only; in production WhiteNoise serves them.
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

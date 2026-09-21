@@ -173,11 +173,13 @@ if DB_ENGINE in ('mongodb', 'mongo'):
     #   * There are no CheckConstraints and no transactions, so
     #     transaction.atomic() is a no-op. Validation lives in the forms and
     #     in Model.clean(); see docs/MONGODB.md.
+    MONGODB_URI = env.str('MONGODB_URI', required=True)
+    MONGODB_DATABASE = env.str('DB_NAME', 'sge_portal')
     DATABASES = {
         'default': {
             'ENGINE': _DB_ENGINES[DB_ENGINE],
-            'HOST': env.str('MONGODB_URI', required=True),
-            'NAME': env.str('DB_NAME', 'sge_portal'),
+            'HOST': MONGODB_URI,
+            'NAME': MONGODB_DATABASE,
         }
     }
     # MongoDB's _id is an ObjectId, so the default primary key type has to
@@ -287,7 +289,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 # The manifest (hashed-filename) storage is correct for production but makes
 # every missing reference a hard error, which is unhelpful while developing.
-STATICFILES_STORAGE = (
+_STATICFILES_BACKEND = (
     'whitenoise.storage.CompressedStaticFilesStorage' if DEBUG
     else 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 )
@@ -295,6 +297,26 @@ WHITENOISE_MAX_AGE = 60 * 60 * 24 * 365
 
 MEDIA_URL = URL_PREFIX + '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# On MongoDB, uploads go to GridFS rather than the filesystem. The hosts this
+# runs on have no writable disk -- Vercel's is read-only, a container's is
+# wiped on deploy -- so a FileField saved under MEDIA_ROOT fails outright with
+# "Read-only file system", or silently loses the file at the next deploy.
+# GridFS keeps them on the cluster that already holds the data.
+# apps.core.views.serve_media streams them back out; see apps/core/storage.py.
+#
+# One STORAGES dict, not STORAGES plus the older STATICFILES_STORAGE: Django
+# 5.x rejects having both.
+if DB_ENGINE in ('mongodb', 'mongo'):
+    GRIDFS_BUCKET = env.str('GRIDFS_BUCKET', 'media')
+    _DEFAULT_FILE_BACKEND = 'apps.core.storage.GridFSStorage'
+else:
+    _DEFAULT_FILE_BACKEND = 'django.core.files.storage.FileSystemStorage'
+
+STORAGES = {
+    'default': {'BACKEND': _DEFAULT_FILE_BACKEND},
+    'staticfiles': {'BACKEND': _STATICFILES_BACKEND},
+}
 
 # Cap uploads so one request cannot exhaust memory or disk.
 MAX_UPLOAD_SIZE_MB = env.int('MAX_UPLOAD_SIZE_MB', 10)

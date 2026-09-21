@@ -1,0 +1,738 @@
+/*
+ * Public website design system — Shri Gouri Engineers.
+ *
+ * Loaded only by templates/website/base_public.html, so nothing here can
+ * reach the client dashboard, which keeps its own styles in app.css.
+ *
+ * The visual language is a drawing office rather than a generic dark theme:
+ * blueprint grids, CAD corner handles, dimension rules and monospace
+ * readouts. The intent is that a manufacturing engineer recognises the
+ * conventions, so "futuristic" reads as precision instrumentation rather
+ * than decoration.
+ *
+ * Plain CSS, not @apply: the Tailwind Play CDN cannot compile @apply outside
+ * a text/tailwindcss block, which is what silently broke the component
+ * classes in this project once before.
+ *
+ * Motion is declared normally here; app.css already carries a global
+ * prefers-reduced-motion block that disables it for visitors who ask.
+ */
+
+:root {
+  --ink-900: #04070c;
+  --ink-800: #070b13;
+  --ink-700: #0b111c;
+  --signal-400: #22d3ee;
+  --signal-500: #06b6d4;
+  --hairline: rgba(148, 163, 184, 0.16);
+  --hairline-strong: rgba(148, 163, 184, 0.3);
+}
+
+/* -- Blueprint grid --------------------------------------------------------
+ * Two superimposed grids, a fine 24px one and a heavy 120px one, the way
+ * squared drawing paper is ruled.
+ */
+.bp-grid {
+  position: relative;
+  background-color: var(--ink-800);
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(to right, rgba(148, 163, 184, 0.13) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.13) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+}
+
+/* Fades the grid towards the edges so it never competes with the text. */
+.bp-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 65% at 50% 10%, transparent 0%, var(--ink-800) 100%);
+}
+
+.bp-grid > * {
+  position: relative;
+}
+
+/* -- Technical label -------------------------------------------------------
+ * Monospace, tracked, preceded by a short rule — a callout marking a view.
+ */
+.tech-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal-400);
+}
+
+.tech-label::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.tech-label--warm {
+  color: #ea580c;
+}
+
+/* -- CAD corner handles ----------------------------------------------------
+ * Four L-shaped marks, like a selected entity in CAD, so a card reads as a
+ * measured object rather than a web panel.
+ */
+.bracket {
+  position: relative;
+}
+
+.bracket::before,
+.bracket::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--signal-500);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.bracket::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.bracket::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+.bracket:hover::before,
+.bracket:hover::after,
+.bracket:focus-within::before,
+.bracket:focus-within::after {
+  opacity: 1;
+}
+
+.bracket-static::before,
+.bracket-static::after {
+  opacity: 0.55;
+}
+
+/* -- Panels ---------------------------------------------------------------- */
+.panel {
+  background: linear-gradient(160deg, rgba(30, 41, 59, 0.55) 0%, rgba(7, 11, 19, 0.75) 100%);
+  border: 1px solid var(--hairline);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.panel:hover {
+  border-color: var(--hairline-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px -24px rgba(6, 182, 212, 0.45);
+}
+
+.panel-light {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.panel-light:hover {
+  border-color: #f97316;
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px -26px rgba(234, 88, 12, 0.5);
+}
+
+/* -- Dimension rule --------------------------------------------------------
+ * A line with end ticks, used as a section divider. Decorative only.
+ */
+.dim-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--hairline-strong);
+}
+
+.dim-rule::before,
+.dim-rule::after {
+  content: "";
+  height: 9px;
+  width: 1px;
+  background: currentColor;
+}
+
+.dim-rule span {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+}
+
+/* -- Buttons ---------------------------------------------------------------
+ * Named cta/ghost rather than reusing .btn-primary, which the dashboard
+ * styles for its own purposes.
+ */
+.btn-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 30px -12px rgba(234, 88, 12, 0.8);
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px -12px rgba(234, 88, 12, 0.9);
+  color: #ffffff;
+}
+
+/* Light sweeping across the face on hover. */
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+}
+
+.btn-cta:hover::after {
+  left: 140%;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #cbd5e1;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  color: #ffffff;
+  border-color: var(--signal-500);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+/* -- Scroll reveal ---------------------------------------------------------
+ * Elements start displaced and site.js releases them as they enter view.
+ * The rule is scoped to .js-reveal, which the script adds, so with no
+ * JavaScript everything renders visible as normal.
+ */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js-reveal .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* -- Capability marquee ----------------------------------------------------- */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+/* -- Instrument readout ----------------------------------------------------- */
+.readout {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* -- Nav ------------------------------------------------------------------- */
+.site-nav {
+  transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+  background-color: rgba(4, 7, 12, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+}
+
+.site-nav.is-scrolled {
+  background-color: rgba(4, 7, 12, 0.94);
+  border-bottom-color: var(--hairline);
+}
+
+.nav-link {
+  position: relative;
+  padding: 0.5rem 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+/* Underline grows from the left, like a cursor travelling a datum line. */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, #f97316, var(--signal-500));
+  transition: width 0.25s ease;
+}
+
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  width: 100%;
+}
+
+.nav-link[aria-current="page"] {
+  color: #ffffff;
+}
+
+/* -- Focus visibility on dark grounds --------------------------------------
+ * The browser default ring disappears against near-black, which would leave
+ * keyboard users unable to see where they are.
+ */
+.bp-grid a:focus-visible,
+.bp-grid button:focus-visible,
+.site-nav a:focus-visible,
+.site-nav button:focus-visible,
+.site-footer a:focus-visible {
+  outline: 2px solid var(--signal-400);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ===========================================================================
+ * Motion layer
+ * ---------------------------------------------------------------------------
+ * Added after review: the first composition read as flat and static. Each
+ * effect below has a mechanical justification rather than being decoration
+ * for its own sake — a plotter drawing a part, a measuring head traversing a
+ * bed, gear trains turning, a lamp raking across a drawing board.
+ *
+ * All of it is decorative in the strict sense: the global
+ * prefers-reduced-motion block in app.css stops every animation here, and no
+ * information is lost when it does.
+ * ======================================================================== */
+
+/* -- Aurora field ----------------------------------------------------------
+ * Slow-drifting colour pools behind the grid, so the dark ground has depth
+ * instead of reading as a flat black rectangle.
+ */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 55vw;
+  height: 55vw;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.aurora::before {
+  top: -18vw;
+  left: -12vw;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.6), transparent 65%);
+  animation: aurora-drift-a 22s ease-in-out infinite;
+}
+
+.aurora::after {
+  bottom: -22vw;
+  right: -14vw;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.5), transparent 65%);
+  animation: aurora-drift-b 28s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(14vw, 8vw, 0) scale(1.18); }
+}
+
+@keyframes aurora-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50%      { transform: translate3d(-12vw, -9vw, 0) scale(0.92); }
+}
+
+/* -- Cursor spotlight ------------------------------------------------------
+ * site.js writes --mx/--my as percentages; the grid brightens under the
+ * pointer like a lamp over a drawing board. With no pointer or no script the
+ * fallback position still looks deliberate.
+ */
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    440px circle at var(--mx, 50%) var(--my, 28%),
+    rgba(34, 211, 238, 0.14),
+    transparent 70%
+  );
+}
+
+/* -- Measuring head --------------------------------------------------------
+ * A bright line traversing the section, as a probe traverses a bed.
+ */
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.85), transparent);
+  box-shadow: 0 0 22px 3px rgba(34, 211, 238, 0.35);
+  animation: scan-traverse 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes scan-traverse {
+  0%   { transform: translateY(0);     opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateY(var(--scan-height, 600px)); opacity: 0; }
+}
+
+/* -- Plotter ---------------------------------------------------------------
+ * Strokes start fully dashed and the offset animates to zero, so the drawing
+ * appears to be plotted. site.js adds .is-drawing when it scrolls into view,
+ * and sets --len per element from its own measured length.
+ */
+.plot [data-draw] {
+  stroke-dasharray: var(--len, 600);
+  stroke-dashoffset: var(--len, 600);
+}
+
+.plot.is-drawing [data-draw] {
+  animation: plot-draw 1.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.plot text {
+  opacity: 0;
+}
+
+.plot.is-drawing text {
+  animation: plot-fade 0.5s ease forwards;
+}
+
+/* Outline first, then detail, then the dimensions — the order a draughtsman
+   works in. */
+.plot.is-drawing .plot-detail [data-draw] { animation-delay: 0.55s; }
+.plot.is-drawing .plot-dims [data-draw]   { animation-delay: 1s; }
+.plot.is-drawing text                     { animation-delay: 1.5s; }
+
+@keyframes plot-draw { to { stroke-dashoffset: 0; } }
+@keyframes plot-fade { to { opacity: 1; } }
+
+/* -- Gear train ------------------------------------------------------------- */
+.gear-cw  { animation: gear-spin 20s linear infinite;         transform-origin: center; transform-box: fill-box; }
+.gear-ccw { animation: gear-spin 20s linear infinite reverse; transform-origin: center; transform-box: fill-box; }
+.gear-fast { animation-duration: 9s; }
+
+@keyframes gear-spin { to { transform: rotate(360deg); } }
+
+/* -- Card tilt -------------------------------------------------------------
+ * site.js writes --rx/--ry from the pointer position over the card.
+ */
+[data-tilt] {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+}
+
+[data-tilt].is-tilting {
+  transition: transform 0.08s linear, box-shadow 0.35s ease, border-color 0.25s ease;
+}
+
+/* -- Travelling edge light --------------------------------------------------
+ * A gradient border that runs around the element. Two mask layers keep the
+ * fill opaque so only the 1px edge lights up.
+ */
+.neon-edge {
+  position: relative;
+  isolation: isolate;
+}
+
+.neon-edge::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.95), rgba(34, 211, 238, 0.95), rgba(249, 115, 22, 0.95));
+  background-size: 300% 300%;
+  animation: neon-travel 8s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.neon-edge:hover::before,
+.neon-edge.is-lit::before { opacity: 1; }
+
+@keyframes neon-travel {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* -- Headline wipe ---------------------------------------------------------
+ * Revealed behind a moving edge rather than simply faded in.
+ */
+.js-reveal .wipe {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.1s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.js-reveal .wipe.is-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+/* -- Scroll progress -------------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #f97316, #22d3ee);
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* -- Floating chips --------------------------------------------------------- */
+.chip-float { animation: chip-bob 5s ease-in-out infinite; }
+.chip-float--slow { animation-duration: 7.5s; animation-delay: -2s; }
+
+@keyframes chip-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+
+/* -- Pulsing status ring ----------------------------------------------------- */
+.pulse-ring { position: relative; }
+
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 211, 238, 0.8);
+  animation: ring-expand 2.4s ease-out infinite;
+}
+
+@keyframes ring-expand {
+  0%   { transform: scale(1);   opacity: 0.9; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+
+/* -- Stat figures ----------------------------------------------------------- */
+.stat-glow {
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
+}
+
+/* ===========================================================================
+ * Sliders and popups
+ * ---------------------------------------------------------------------------
+ * Driven by Alpine, which the project already loads. State lives in the
+ * template; these classes only carry presentation and the transitions.
+ * ======================================================================== */
+
+/* -- Slider ---------------------------------------------------------------- */
+.slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.slider__track {
+  display: flex;
+  transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.slider__slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+/* Arrows sit over the slide, and are large enough to hit on a phone. */
+.slider__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  border: 1px solid var(--hairline-strong);
+  background: rgba(4, 7, 12, 0.6);
+  backdrop-filter: blur(8px);
+  color: #cbd5e1;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.slider__arrow:hover {
+  color: #fff;
+  border-color: var(--signal-500);
+  background: rgba(6, 182, 212, 0.16);
+  transform: scale(1.06);
+}
+
+/* Dots read as a progress scale, the long one marking position. */
+.slider__dot {
+  height: 3px;
+  width: 1.75rem;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.3);
+  transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.slider__dot.is-active {
+  width: 3.5rem;
+  background: linear-gradient(90deg, #f97316, #22d3ee);
+}
+
+/* -- Rail carousel ---------------------------------------------------------
+ * A scroll-snapping rail, for runs of cards where a full-width slider would
+ * waste the space. Scrollbar hidden; the arrows and a drag both work.
+ */
+.rail {
+  display: flex;
+  gap: 1.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 0.5rem;
+}
+
+.rail::-webkit-scrollbar { display: none; }
+
+.rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 85%;
+}
+
+@media (min-width: 640px) { .rail > * { flex-basis: 48%; } }
+@media (min-width: 1024px) { .rail > * { flex-basis: 31.5%; } }
+
+/* -- Popup ------------------------------------------------------------------ */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(4, 7, 12, 0.82);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.popup-panel {
+  position: relative;
+  width: 100%;
+  max-width: 62rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.8);
+}
+
+.popup-panel--dark {
+  background: linear-gradient(160deg, #0b111c 0%, #04070c 100%);
+  border: 1px solid var(--hairline-strong);
+}
+
+.popup-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: rgba(4, 7, 12, 0.6);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.popup-close:hover {
+  background: #ea580c;
+  transform: rotate(90deg);
+}
+
+/* Alpine transition classes, declared here so the templates stay readable. */
+.popup-enter        { transition: opacity 0.25s ease; }
+.popup-enter-start  { opacity: 0; }
+.popup-enter-end    { opacity: 1; }
+.popup-leave        { transition: opacity 0.2s ease; }
+.popup-leave-start  { opacity: 1; }
+.popup-leave-end    { opacity: 0; }
+
+.panel-enter        { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.panel-enter-start  { opacity: 0; transform: translateY(24px) scale(0.97); }
+.panel-enter-end    { opacity: 1; transform: none; }
+.panel-leave        { transition: opacity 0.2s ease, transform 0.2s ease; }
+.panel-leave-start  { opacity: 1; transform: none; }
+.panel-leave-end    { opacity: 0; transform: translateY(12px) scale(0.98); }

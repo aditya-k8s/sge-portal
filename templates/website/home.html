@@ -1,253 +1,259 @@
 {% extends "website/base_public.html" %}
-{% block title %}Shri Gouri Engineers — Precision CNC & VMC Machining{% endblock %}
+{% block title %}{{ COMPANY_NAME|default:"Shri Gouri Engineers" }} — Precision CNC &amp; VMC Machining{% endblock %}
+{% block meta_description %}Precision CNC, VMC, BMC and lathe machining for automotive, industrial and manufacturing sectors. Components made to drawing, inspected before despatch, trackable online.{% endblock %}
+
 {% block content %}
 
-<!-- Hero -->
-<section class="relative bg-steel-900 overflow-hidden">
-  <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, #f97316 0, #f97316 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
-  <div class="relative max-w-7xl mx-auto px-4 py-24 md:py-32 flex flex-col md:flex-row items-center gap-12">
-    <div class="flex-1 text-center md:text-left">
-      <div class="inline-flex items-center gap-2 bg-orange-500 bg-opacity-20 text-orange-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-orange-500 border-opacity-30">
-        <span class="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse"></span>
-        Precision Manufacturing
+{% include "website/partials/_hero_slider.html" %}
+
+
+<!-- ======================================================== CAPABILITIES ==
+     A continuously scrolling strip of capabilities. Duplicated once so the
+     translation can loop seamlessly; the copy is hidden from screen readers
+     so it is not announced twice. -->
+<section class="bg-ink-900 border-y border-white/5 py-5">
+  <div class="marquee">
+    <div class="marquee__track animate-sge-marquee gap-10 pr-10">
+      <div class="flex items-center gap-10 pr-10 shrink-0">
+        {% include "website/partials/_capability_items.html" %}
       </div>
-      <h1 class="font-display font-bold text-5xl md:text-7xl text-white leading-tight mb-6">
-        PRECISION<br>
-        <span class="text-orange-500">MACHINING</span><br>
-        <span class="text-steel-300 text-4xl md:text-5xl">REDEFINED</span>
-      </h1>
-      <p class="text-steel-400 text-lg leading-relaxed mb-8 max-w-xl">
-        CNC, VMC, BMC & Lathe machining for automotive, industrial and manufacturing sectors. Every component crafted to exact tolerance.
+      <div class="flex items-center gap-10 pr-10 shrink-0" aria-hidden="true">
+        {% include "website/partials/_capability_items.html" %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== ABOUT === -->
+<section class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <div class="reveal">
+        <p class="tech-label tech-label--warm mb-5">About the workshop</p>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 leading-tight mb-6">
+          Built around tolerance,<br>not around guesswork
+        </h2>
+        <p class="text-steel-600 leading-relaxed mb-5">
+          We machine components to customer drawings on CNC and VMC equipment,
+          for customers who need a part to fit the first time. Work is
+          inspected against the drawing before it leaves the floor, and
+          nothing is despatched on assumption.
+        </p>
+        <p class="text-steel-600 leading-relaxed mb-8">
+          Every order is logged in our own tracking portal, so you can see the
+          stage a job has reached — material receipt, cutting, milling, heat
+          treatment, inspection — without telephoning to ask.
+        </p>
+        <a href="{% url 'about' %}"
+           class="inline-flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700 transition-colors">
+          More about us
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="bracket neon-edge panel-light rounded-2xl p-6 reveal" data-tilt data-reveal-delay="60">
+          <svg class="w-8 h-8 text-brand-600 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="font-bold text-steel-900 mb-2">Inspected, not assumed</h3>
+          <p class="text-sm text-steel-500 leading-relaxed">Each part is checked against the drawing before despatch.</p>
+        </div>
+        <div class="bracket neon-edge panel-light rounded-2xl p-6 reveal" data-tilt data-reveal-delay="120">
+          <svg class="w-8 h-8 text-brand-600 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3 class="font-bold text-steel-900 mb-2">Dates we commit to</h3>
+          <p class="text-sm text-steel-500 leading-relaxed">Scheduled delivery, with live progress visible to you throughout.</p>
+        </div>
+        <div class="bracket neon-edge panel-light rounded-2xl p-6 reveal" data-tilt data-reveal-delay="180">
+          <svg class="w-8 h-8 text-brand-600 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75 3.75 2.25 7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z"/>
+          </svg>
+          <h3 class="font-bold text-steel-900 mb-2">Machines for the job</h3>
+          <p class="text-sm text-steel-500 leading-relaxed">CNC, VMC, BMC, lathe, milling, drilling and grinding under one roof.</p>
+        </div>
+        <div class="bracket neon-edge panel-light rounded-2xl p-6 reveal" data-tilt data-reveal-delay="240">
+          <svg class="w-8 h-8 text-brand-600 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+          </svg>
+          <h3 class="font-bold text-steel-900 mb-2">Machinists, not operators</h3>
+          <p class="text-sm text-steel-500 leading-relaxed">Experienced staff who read a drawing and question what looks wrong.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ SERVICES === -->
+<section class="bg-steel-50 py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mb-14 reveal">
+      <p class="tech-label tech-label--warm mb-5">What we do</p>
+      <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 leading-tight">Machining services</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% if services %}
+        {% for service in services %}
+        <article class="bracket neon-edge panel-light rounded-2xl p-7 reveal" data-tilt data-reveal-delay="{{ forloop.counter0|add:forloop.counter0 }}0">
+          <p class="readout text-[0.625rem] text-steel-400 tracking-[0.2em] mb-5">{{ forloop.counter|stringformat:"02d" }}</p>
+          <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-xl mb-5">{{ service.icon_label }}</div>
+          <h3 class="font-bold text-steel-900 mb-2">{{ service.title }}</h3>
+          <p class="text-sm text-steel-500 leading-relaxed">{{ service.short_description|default:service.description|truncatechars:90 }}</p>
+        </article>
+        {% endfor %}
+      {% else %}
+        {% include "website/partials/_default_services.html" %}
+      {% endif %}
+    </div>
+
+    <div class="mt-10 reveal">
+      <a href="{% url 'services' %}"
+         class="inline-flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700 transition-colors">
+        All services in detail
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= PROCESS ===
+     The manufacturing route, which is also what the client portal tracks.
+     Numbered stages on a datum line. -->
+<section class="bp-grid spotlight relative overflow-hidden py-24">
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mb-16 reveal">
+      <p class="tech-label mb-5">How a job runs</p>
+      <h2 class="font-display font-bold text-4xl sm:text-5xl text-white leading-tight mb-5">From drawing to despatch</h2>
+      <p class="text-steel-400 leading-relaxed">
+        Every order moves through the same route, and you can see which stage
+        it has reached at any time from the client portal.
       </p>
-      <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-        <a href="{% url 'contact' %}" class="px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-colors text-lg">Get a Quote</a>
-        <a href="{% url 'our_work' %}" class="px-8 py-4 border border-steel-600 hover:border-orange-500 text-steel-300 hover:text-white font-semibold rounded-xl transition-colors text-lg">View Our Work</a>
-      </div>
     </div>
-    <div class="flex-1 grid grid-cols-2 gap-4 max-w-md w-full">
-      <div class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-2xl p-6 text-center">
-        <p class="font-display font-bold text-4xl text-orange-400 mb-2">500+</p>
-        <p class="text-xs text-steel-400 uppercase tracking-wide">Parts Manufactured</p>
-      </div>
-      <div class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-2xl p-6 text-center">
-        <p class="font-display font-bold text-4xl text-orange-400 mb-2">50+</p>
-        <p class="text-xs text-steel-400 uppercase tracking-wide">Happy Clients</p>
-      </div>
-      <div class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-2xl p-6 text-center">
-        <p class="font-display font-bold text-4xl text-orange-400 mb-2">99%</p>
-        <p class="text-xs text-steel-400 uppercase tracking-wide">On-Time Delivery</p>
-      </div>
-      <div class="bg-white bg-opacity-5 border border-white border-opacity-10 rounded-2xl p-6 text-center">
-        <p class="font-display font-bold text-4xl text-orange-400 mb-2">±0.01</p>
-        <p class="text-xs text-steel-400 uppercase tracking-wide">mm Tolerance</p>
-      </div>
-    </div>
+
+    <ol class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
+      <li class="bracket neon-edge panel rounded-2xl p-6 reveal" data-tilt>
+        <p class="readout text-3xl font-bold text-brand-500 mb-4">01</p>
+        <h3 class="font-display font-bold text-lg text-white mb-2 tracking-wide">MATERIAL</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Stock received, checked against the order and logged.</p>
+      </li>
+      <li class="bracket neon-edge panel rounded-2xl p-6 reveal" data-tilt data-reveal-delay="80">
+        <p class="readout text-3xl font-bold text-brand-500 mb-4">02</p>
+        <h3 class="font-display font-bold text-lg text-white mb-2 tracking-wide">CUTTING</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Sawing and rough turning to the billet size the part needs.</p>
+      </li>
+      <li class="bracket neon-edge panel rounded-2xl p-6 reveal" data-tilt data-reveal-delay="160">
+        <p class="readout text-3xl font-bold text-brand-500 mb-4">03</p>
+        <h3 class="font-display font-bold text-lg text-white mb-2 tracking-wide">MACHINING</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">CNC and VMC operations: milling, boring, drilling, tapping.</p>
+      </li>
+      <li class="bracket neon-edge panel rounded-2xl p-6 reveal" data-tilt data-reveal-delay="240">
+        <p class="readout text-3xl font-bold text-brand-500 mb-4">04</p>
+        <h3 class="font-display font-bold text-lg text-white mb-2 tracking-wide">FINISHING</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Heat treatment, grinding and surface finish to drawing.</p>
+      </li>
+      <li class="bracket neon-edge panel rounded-2xl p-6 reveal" data-tilt data-reveal-delay="320">
+        <p class="readout text-3xl font-bold text-signal-400 mb-4">05</p>
+        <h3 class="font-display font-bold text-lg text-white mb-2 tracking-wide">INSPECTION</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Dimensional check against the drawing, then despatch.</p>
+      </li>
+    </ol>
   </div>
 </section>
 
-<!-- Services Strip -->
-<section class="bg-orange-600 py-4">
-  <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-6 justify-center md:justify-between text-white text-sm font-semibold">
-    <span class="flex items-center gap-2"><span class="text-orange-200">⚙</span> CNC Machining</span>
-    <span class="hidden md:block text-orange-400">|</span>
-    <span class="flex items-center gap-2"><span class="text-orange-200">⚙</span> VMC Machining</span>
-    <span class="hidden md:block text-orange-400">|</span>
-    <span class="flex items-center gap-2"><span class="text-orange-200">⚙</span> Precision Turning</span>
-    <span class="hidden md:block text-orange-400">|</span>
-    <span class="flex items-center gap-2"><span class="text-orange-200">⚙</span> Milling & Drilling</span>
-    <span class="hidden md:block text-orange-400">|</span>
-    <span class="flex items-center gap-2"><span class="text-orange-200">⚙</span> Quality Inspection</span>
-  </div>
-</section>
-
-<!-- About Preview -->
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-    <div>
-      <p class="text-orange-600 text-sm font-semibold uppercase tracking-widest mb-3">About Shri Gouri Engineers</p>
-      <h2 class="font-display font-bold text-4xl text-steel-900 mb-5 leading-tight">Crafting Precision, One Component at a Time</h2>
-      <p class="text-steel-600 leading-relaxed mb-4">We are a precision manufacturing company specializing in CNC and VMC machined components. Equipped with state-of-the-art machinery and a skilled team, we deliver components that meet the strictest industry tolerances.</p>
-      <p class="text-steel-600 leading-relaxed mb-6">Our integrated project tracking portal ensures clients have real-time visibility into the manufacturing progress of their orders — from material receipt to final quality check.</p>
-      <a href="{% url 'about' %}" class="btn-primary inline-flex">Learn More →</a>
-    </div>
-    <div class="grid grid-cols-2 gap-5">
-      <div class="bg-steel-50 rounded-2xl p-6 border border-steel-100">
-        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <p class="font-semibold text-steel-800 mb-1">Quality First</p>
-        <p class="text-xs text-steel-500">Every part inspected to drawing specifications before delivery.</p>
-      </div>
-      <div class="bg-steel-50 rounded-2xl p-6 border border-steel-100">
-        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <p class="font-semibold text-steel-800 mb-1">On-Time Delivery</p>
-        <p class="text-xs text-steel-500">Committed schedules with real-time tracking for every client.</p>
-      </div>
-      <div class="bg-steel-50 rounded-2xl p-6 border border-steel-100">
-        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37"/></svg>
-        </div>
-        <p class="font-semibold text-steel-800 mb-1">Advanced Machinery</p>
-        <p class="text-xs text-steel-500">CNC, VMC, BMC, Lathe and more in our modern facility.</p>
-      </div>
-      <div class="bg-steel-50 rounded-2xl p-6 border border-steel-100">
-        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"/></svg>
-        </div>
-        <p class="font-semibold text-steel-800 mb-1">Expert Team</p>
-        <p class="text-xs text-steel-500">Experienced machinists and engineers on every project.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Services Preview -->
-<section class="py-20 bg-steel-50">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-12">
-      <p class="text-orange-600 text-sm font-semibold uppercase tracking-widest mb-2">What We Offer</p>
-      <h2 class="font-display font-bold text-4xl text-steel-900">Our Services</h2>
-    </div>
-    {% if services %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {% for service in services %}
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 hover:border-orange-300 hover:shadow-md transition-all">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 text-2xl">{{ service.icon_label }}</div>
-        <h3 class="font-bold text-steel-800 mb-2">{{ service.title }}</h3>
-        <p class="text-xs text-steel-500 leading-relaxed">{{ service.short_description|default:service.description|truncatechars:80 }}</p>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 hover:border-orange-300 hover:shadow-md transition-all">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 text-xl">⚙</div>
-        <h3 class="font-bold text-steel-800 mb-2">CNC Machining</h3>
-        <p class="text-xs text-steel-500 leading-relaxed">High-precision CNC turning and milling for complex components.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 hover:border-orange-300 hover:shadow-md transition-all">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 text-xl">🏭</div>
-        <h3 class="font-bold text-steel-800 mb-2">VMC Machining</h3>
-        <p class="text-xs text-steel-500 leading-relaxed">Vertical machining centre for multi-axis milling operations.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 hover:border-orange-300 hover:shadow-md transition-all">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 text-xl">🔩</div>
-        <h3 class="font-bold text-steel-800 mb-2">Precision Engineering</h3>
-        <p class="text-xs text-steel-500 leading-relaxed">Close-tolerance components for critical applications.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 hover:border-orange-300 hover:shadow-md transition-all">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 text-xl">🛠</div>
-        <h3 class="font-bold text-steel-800 mb-2">Custom Fabrication</h3>
-        <p class="text-xs text-steel-500 leading-relaxed">From your drawing to a finished part, any geometry or material.</p>
-      </div>
-    </div>
-    {% endif %}
-    <div class="text-center mt-8">
-      <a href="{% url 'services' %}" class="btn-secondary inline-flex">View All Services →</a>
-    </div>
-  </div>
-</section>
-
-<!-- Featured Work -->
+<!-- ================================================================ WORK ===
+     Featured components as a sliding rail, each card opening a popup. -->
 {% if featured_work %}
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="flex items-end justify-between mb-10">
-      <div>
-        <p class="text-orange-600 text-sm font-semibold uppercase tracking-widest mb-2">Portfolio</p>
-        <h2 class="font-display font-bold text-4xl text-steel-900">Our Work</h2>
-      </div>
-      <a href="{% url 'our_work' %}" class="btn-secondary hidden sm:inline-flex">View All →</a>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for sample in featured_work %}
-      <div class="rounded-2xl overflow-hidden border border-steel-100 hover:shadow-lg hover:border-orange-200 transition-all group">
-        {% if sample.image %}
-        <div class="h-52 overflow-hidden">
-          <img src="{{ sample.image.url }}" alt="{{ sample.title }}"
-               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-        </div>
-        {% else %}
-        <div class="h-52 bg-gradient-to-br from-steel-700 to-steel-900 flex items-center justify-center">
-          <span class="font-display font-bold text-orange-400 text-3xl">{{ sample.get_category_display|slice:":3"|upper }}</span>
-        </div>
-        {% endif %}
-        <div class="p-5">
-          <div class="flex items-start justify-between mb-1">
-            <p class="font-bold text-steel-800">{{ sample.title }}</p>
-            <span class="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full ml-2 flex-shrink-0">{{ sample.get_category_display }}</span>
-          </div>
-          {% if sample.material %}<p class="text-xs text-steel-400">{{ sample.material }}{% if sample.machine_used %} · {{ sample.machine_used }}{% endif %}</p>{% endif %}
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    <div class="text-center mt-8 sm:hidden">
-      <a href="{% url 'our_work' %}" class="btn-secondary inline-flex">View All Work →</a>
-    </div>
-  </div>
-</section>
+{% include "website/partials/_work_rail.html" %}
 {% endif %}
 
-<!-- Industries -->
-<section class="py-20 {% if featured_work %}bg-steel-50{% else %}bg-white{% endif %}">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="text-center mb-12">
-      <p class="text-orange-600 text-sm font-semibold uppercase tracking-widest mb-2">Industries We Serve</p>
-      <h2 class="font-display font-bold text-4xl text-steel-900">Built for Every Sector</h2>
+<!-- ========================================================== INDUSTRIES === -->
+<section class="{% if featured_work %}bg-steel-50{% else %}bg-white{% endif %} py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mb-14 reveal">
+      <p class="tech-label tech-label--warm mb-5">Sectors served</p>
+      <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 leading-tight">Industries we supply</h2>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-steel-800 to-steel-900 p-8 hover:shadow-xl transition-all">
-        <div class="absolute inset-0 bg-orange-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-        <div class="text-5xl mb-4">🚗</div>
-        <h3 class="font-display font-bold text-xl text-white mb-2">Automotive</h3>
-        <p class="text-steel-400 text-sm">Engine components, transmission parts, brackets, and precision automotive hardware.</p>
-      </div>
-      <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-steel-800 to-steel-900 p-8 hover:shadow-xl transition-all">
-        <div class="absolute inset-0 bg-orange-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-        <div class="text-5xl mb-4">🏭</div>
-        <h3 class="font-display font-bold text-xl text-white mb-2">Industrial</h3>
-        <p class="text-steel-400 text-sm">Custom machine parts, jigs, fixtures, and complex industrial components.</p>
-      </div>
-      <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-steel-800 to-steel-900 p-8 hover:shadow-xl transition-all">
-        <div class="absolute inset-0 bg-orange-600 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-        <div class="text-5xl mb-4">⚙️</div>
-        <h3 class="font-display font-bold text-xl text-white mb-2">Manufacturing</h3>
-        <p class="text-steel-400 text-sm">Sub-assemblies, tooling inserts, and high-volume precision components.</p>
-      </div>
+
+    <div class="grid sm:grid-cols-3 gap-6">
+      <article class="group relative bracket rounded-2xl overflow-hidden bp-grid p-8 min-h-[16rem] flex flex-col justify-end reveal">
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-600/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
+        <svg class="w-10 h-10 text-brand-500 mb-5" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+        </svg>
+        <h3 class="font-display font-bold text-2xl text-white mb-2 tracking-wide">AUTOMOTIVE</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Engine and transmission components, brackets and precision hardware.</p>
+      </article>
+
+      <article class="group relative bracket rounded-2xl overflow-hidden bp-grid p-8 min-h-[16rem] flex flex-col justify-end reveal" data-reveal-delay="100">
+        <div class="absolute inset-0 bg-gradient-to-t from-signal-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
+        <svg class="w-10 h-10 text-signal-400 mb-5" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+        </svg>
+        <h3 class="font-display font-bold text-2xl text-white mb-2 tracking-wide">INDUSTRIAL</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Machine parts, jigs, fixtures and complex one-off components.</p>
+      </article>
+
+      <article class="group relative bracket rounded-2xl overflow-hidden bp-grid p-8 min-h-[16rem] flex flex-col justify-end reveal" data-reveal-delay="200">
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-600/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true"></div>
+        <svg class="w-10 h-10 text-brand-500 mb-5" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964"/>
+        </svg>
+        <h3 class="font-display font-bold text-2xl text-white mb-2 tracking-wide">MANUFACTURING</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Sub-assemblies, tooling inserts and repeat production batches.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- Project Tracking CTA -->
-<section class="py-20 bg-gradient-to-br from-orange-600 to-orange-700">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h2 class="font-display font-bold text-4xl text-white mb-4">Track Your Projects in Real Time</h2>
-    <p class="text-orange-100 text-lg mb-8 leading-relaxed">
-      As a Shri Gouri Engineers client, you get access to our online portal — see exactly what stage your parts are at, download drawings, and receive instant notifications on progress.
+<!-- ============================================================== PORTAL === -->
+<section class="bg-ink-900 py-24 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-brand-600/15 via-transparent to-signal-500/10" aria-hidden="true"></div>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+    <p class="tech-label justify-center mb-6 reveal">Client portal</p>
+    <h2 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-6 reveal" data-reveal-delay="80">
+      Know where your parts are,<br class="hidden sm:block"> without asking
+    </h2>
+    <p class="text-steel-400 text-lg leading-relaxed max-w-2xl mx-auto mb-10 reveal" data-reveal-delay="160">
+      Customers get an account on our tracking portal: the stage each order has
+      reached, drawings and invoices to download, and a notification whenever
+      something moves.
     </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="{% url 'login' %}" class="px-8 py-4 bg-white text-orange-600 font-bold rounded-xl hover:bg-orange-50 transition-colors">Client Login</a>
-      <a href="{% url 'contact' %}" class="px-8 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:bg-opacity-10 transition-colors">Become a Client</a>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center reveal" data-reveal-delay="240">
+      <a href="{% url 'login' %}" class="btn-cta">Client login</a>
+      <a href="{% url 'contact' %}" class="btn-ghost">Become a customer</a>
     </div>
   </div>
 </section>
 
-<!-- Bottom CTA bar -->
-<section class="py-16 bg-steel-900">
-  <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-    <div>
-      <h2 class="font-display font-bold text-2xl text-white">Ready to start your project?</h2>
-      <p class="text-steel-400 text-sm mt-1">Contact us for a free quote on your machining requirements.</p>
-    </div>
-    <div class="flex items-center gap-4">
-      <div class="text-center">
-        <p class="text-xs text-steel-400 uppercase tracking-wide">Call Us</p>
-        <p class="text-orange-400 font-semibold">+91-XXXXXXXXXX</p>
+<!-- ================================================================= CTA === -->
+<section class="bg-white py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bracket bracket-static rounded-3xl bg-steel-900 px-8 py-12 sm:px-12 flex flex-col lg:flex-row items-center justify-between gap-8 reveal">
+      <div>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-3">Have a drawing ready?</h2>
+        <p class="text-steel-400 leading-relaxed max-w-xl">
+          Send it across with your quantity and material, and we will come back
+          with a price and a lead time.
+        </p>
       </div>
-      <a href="{% url 'contact' %}" class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-colors">Send Enquiry</a>
+      <div class="flex flex-col sm:flex-row items-center gap-5 flex-shrink-0">
+        {% if COMPANY_PHONE %}
+        <div class="text-center sm:text-right">
+          <p class="readout text-[0.625rem] text-steel-500 uppercase tracking-[0.2em] mb-1">Call the works</p>
+          <a href="tel:{{ COMPANY_PHONE }}" class="readout text-lg font-bold text-signal-400 hover:text-signal-300 transition-colors">{{ COMPANY_PHONE }}</a>
+        </div>
+        {% endif %}
+        <a href="{% url 'contact' %}" class="btn-cta">Send an enquiry</a>
+      </div>
     </div>
   </div>
 </section>

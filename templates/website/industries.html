@@ -1,148 +1,177 @@
 {% extends "website/base_public.html" %}
-{% block title %}Industries We Serve — Shri Gouri Engineers{% endblock %}
+{% block title %}Industries We Serve — {{ COMPANY_NAME|default:"Shri Gouri Engineers" }}{% endblock %}
+{% block meta_description %}Precision machined components for automotive, industrial machinery and general manufacturing customers, from prototype to repeat production.{% endblock %}
+
 {% block content %}
 
-<section class="bg-steel-900 py-20">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <p class="text-orange-500 text-sm font-semibold uppercase tracking-widest mb-3">Sectors We Work In</p>
-    <h1 class="font-display font-bold text-5xl text-white mb-4">Industries We Serve</h1>
-    <p class="text-steel-400 max-w-2xl mx-auto">Supplying precision machined components to some of the most demanding sectors in Indian manufacturing.</p>
-  </div>
-</section>
+{% include "website/partials/_page_header.html" with eyebrow="Section 04 · Sectors" page_title="Where our parts end up" lead="Precision machined components for some of the most demanding sectors in Indian manufacturing." %}
 
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 space-y-16">
+<!-- ========================================================== AUTOMOTIVE === -->
+<section class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-14 items-center">
 
-    <!-- Automotive -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div>
-        <div class="inline-flex items-center gap-3 mb-5">
-          <div class="w-14 h-14 bg-steel-900 rounded-2xl flex items-center justify-center text-3xl">🚗</div>
-          <div>
-            <p class="text-xs text-orange-600 font-semibold uppercase tracking-wide">Industry 01</p>
-            <h2 class="font-display font-bold text-3xl text-steel-900">Automotive</h2>
-          </div>
-        </div>
-        <p class="text-steel-600 leading-relaxed mb-4">The automotive industry demands parts that meet strict dimensional tolerances and surface finish requirements — often in high volumes. We supply OEMs and Tier-1 suppliers with a wide range of turned and milled components.</p>
-        <div class="grid grid-cols-2 gap-3 mt-5">
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Engine Components</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Transmission Parts</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Brackets & Flanges</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Shafts & Gears</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Housings & Covers</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Hydraulic Fittings</div>
-        </div>
+      <div class="reveal">
+        <p class="readout text-[0.625rem] text-brand-600 tracking-[0.25em] uppercase mb-4">Industry 01</p>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 mb-5 tracking-wide">AUTOMOTIVE</h2>
+        <p class="text-steel-600 leading-relaxed mb-8">
+          Automotive work demands tight dimensional tolerances and controlled
+          surface finish, usually in volume. We supply OEMs and Tier-1
+          suppliers with turned and milled components made to their drawings.
+        </p>
+        <ul class="grid grid-cols-2 gap-2.5">
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Engine components</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Transmission parts</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Brackets &amp; flanges</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Shafts &amp; gears</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Housings &amp; covers</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Hydraulic fittings</li>
+        </ul>
       </div>
-      <div class="bg-gradient-to-br from-steel-800 to-steel-900 rounded-3xl p-10 text-center">
-        <p class="text-7xl mb-4">🚗</p>
-        <p class="font-display font-bold text-2xl text-white mb-2">Automotive Grade</p>
-        <p class="text-steel-400 text-sm">Tolerances down to ±0.01mm for critical engine and transmission components</p>
-      </div>
-    </div>
 
-    <hr class="border-steel-100">
-
-    <!-- Industrial Machinery -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div class="md:order-2">
-        <div class="inline-flex items-center gap-3 mb-5">
-          <div class="w-14 h-14 bg-steel-900 rounded-2xl flex items-center justify-center text-3xl">🏭</div>
-          <div>
-            <p class="text-xs text-orange-600 font-semibold uppercase tracking-wide">Industry 02</p>
-            <h2 class="font-display font-bold text-3xl text-steel-900">Industrial Machinery</h2>
-          </div>
-        </div>
-        <p class="text-steel-600 leading-relaxed mb-4">Machine builders and capital equipment manufacturers rely on us for precision sub-components. Whether it's one prototype or a recurring production order, we deliver consistent quality with short lead times.</p>
-        <div class="grid grid-cols-2 gap-3 mt-5">
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Spindles & Bushings</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Guide Rods & Rails</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Jigs & Fixtures</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Tooling Inserts</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Bearing Housings</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Coupling Components</div>
-        </div>
-      </div>
-      <div class="md:order-1 bg-gradient-to-br from-orange-600 to-orange-700 rounded-3xl p-10 text-center">
-        <p class="text-7xl mb-4">🏭</p>
-        <p class="font-display font-bold text-2xl text-white mb-2">Built to Last</p>
-        <p class="text-orange-100 text-sm">Components that keep your production lines running without interruption</p>
-      </div>
-    </div>
-
-    <hr class="border-steel-100">
-
-    <!-- General Manufacturing -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div>
-        <div class="inline-flex items-center gap-3 mb-5">
-          <div class="w-14 h-14 bg-steel-900 rounded-2xl flex items-center justify-center text-3xl">⚙️</div>
-          <div>
-            <p class="text-xs text-orange-600 font-semibold uppercase tracking-wide">Industry 03</p>
-            <h2 class="font-display font-bold text-3xl text-steel-900">General Manufacturing</h2>
-          </div>
-        </div>
-        <p class="text-steel-600 leading-relaxed mb-4">From pump manufacturers to valve makers, we cater to a wide range of general manufacturing clients who need reliable machining partners with quick turnaround and consistent quality.</p>
-        <div class="grid grid-cols-2 gap-3 mt-5">
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Pump Bodies & Impellers</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Valve Components</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Custom Fasteners</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Structural Brackets</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">Pneumatic Parts</div>
-          <div class="bg-steel-50 rounded-xl p-3 text-sm text-steel-700 font-medium border border-steel-100">OEM Sub-Assemblies</div>
-        </div>
-      </div>
-      <div class="bg-gradient-to-br from-steel-700 to-steel-800 rounded-3xl p-10 text-center">
-        <p class="text-7xl mb-4">⚙️</p>
-        <p class="font-display font-bold text-2xl text-white mb-2">Any Component</p>
-        <p class="text-steel-400 text-sm">From simple turned parts to complex multi-operation machined components</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- Why Us for These Industries -->
-<section class="py-20 bg-steel-50">
-  <div class="max-w-7xl mx-auto px-4">
-    <h2 class="font-display font-bold text-3xl text-steel-900 text-center mb-12">Why Manufacturers Choose Us</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 text-center hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h3 class="font-bold text-steel-800 mb-2">Consistent Quality</h3>
-        <p class="text-xs text-steel-500">100% inspection before dispatch. No compromises on dimensional accuracy.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 text-center hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        </div>
-        <h3 class="font-bold text-steel-800 mb-2">Fast Turnaround</h3>
-        <p class="text-xs text-steel-500">We understand production schedules. Urgent jobs handled with priority.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 text-center hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-        </div>
-        <h3 class="font-bold text-steel-800 mb-2">Full Transparency</h3>
-        <p class="text-xs text-steel-500">Online portal with real-time stage tracking for every project.</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 border border-steel-100 text-center hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h3 class="font-bold text-steel-800 mb-2">Competitive Pricing</h3>
-        <p class="text-xs text-steel-500">Cost-effective machining without compromising on quality or delivery.</p>
+      <div class="bracket bracket-static bp-grid rounded-3xl p-10 reveal" data-reveal-delay="120">
+        <svg class="w-14 h-14 text-brand-500 mb-7" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+        </svg>
+        <p class="font-display font-bold text-3xl text-white mb-3 tracking-wide">AUTOMOTIVE GRADE</p>
+        <p class="text-steel-400 leading-relaxed mb-7">
+          Tolerances to ±0.01mm on critical engine and transmission components.
+        </p>
+        <div class="dim-rule" aria-hidden="true"><span></span></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="py-16 bg-orange-600 text-white text-center">
-  <div class="max-w-3xl mx-auto px-4">
-    <h2 class="font-display font-bold text-3xl mb-3">Is your industry on the list?</h2>
-    <p class="text-orange-100 mb-6">Even if you don't see your sector above, we likely have the capability. Reach out and let's discuss.</p>
-    <a href="{% url 'contact' %}" class="px-8 py-4 bg-white text-orange-600 font-bold rounded-xl hover:bg-orange-50 transition-colors inline-block">Talk to Us</a>
+<!-- ========================================================== INDUSTRIAL === -->
+<section class="bg-steel-50 py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-14 items-center">
+
+      <div class="lg:order-2 reveal">
+        <p class="readout text-[0.625rem] text-brand-600 tracking-[0.25em] uppercase mb-4">Industry 02</p>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 mb-5 tracking-wide">INDUSTRIAL MACHINERY</h2>
+        <p class="text-steel-600 leading-relaxed mb-8">
+          Machine builders and capital equipment manufacturers come to us for
+          precision sub-components. One prototype or a recurring production
+          order, the process and the inspection are the same.
+        </p>
+        <ul class="grid grid-cols-2 gap-2.5">
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Spindles &amp; bushings</li>
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Guide rods &amp; rails</li>
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Jigs &amp; fixtures</li>
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Tooling inserts</li>
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Bearing housings</li>
+          <li class="readout text-xs text-steel-700 bg-white border border-steel-200 rounded-lg px-3.5 py-2.5">Coupling components</li>
+        </ul>
+      </div>
+
+      <div class="lg:order-1 bracket bracket-static rounded-3xl p-10 bg-gradient-to-br from-brand-600 to-brand-700 reveal" data-reveal-delay="120">
+        <svg class="w-14 h-14 text-white/90 mb-7" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+        </svg>
+        <p class="font-display font-bold text-3xl text-white mb-3 tracking-wide">BUILT TO LAST</p>
+        <p class="text-brand-100 leading-relaxed">
+          Components that keep production lines running rather than stopping
+          them.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= MANUFACTURING === -->
+<section class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-14 items-center">
+
+      <div class="reveal">
+        <p class="readout text-[0.625rem] text-brand-600 tracking-[0.25em] uppercase mb-4">Industry 03</p>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 mb-5 tracking-wide">GENERAL MANUFACTURING</h2>
+        <p class="text-steel-600 leading-relaxed mb-8">
+          From pump manufacturers to valve makers, we work with customers who
+          need a dependable machining partner with quick turnaround and
+          consistent output.
+        </p>
+        <ul class="grid grid-cols-2 gap-2.5">
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Pump bodies &amp; impellers</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Valve components</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Custom fasteners</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Structural brackets</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">Pneumatic parts</li>
+          <li class="readout text-xs text-steel-700 bg-steel-50 border border-steel-200 rounded-lg px-3.5 py-2.5">OEM sub-assemblies</li>
+        </ul>
+      </div>
+
+      <div class="bracket bracket-static bp-grid rounded-3xl p-10 reveal" data-reveal-delay="120">
+        <svg class="w-14 h-14 text-signal-400 mb-7" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964"/>
+        </svg>
+        <p class="font-display font-bold text-3xl text-white mb-3 tracking-wide">ANY COMPONENT</p>
+        <p class="text-steel-400 leading-relaxed mb-7">
+          From a simple turned part to a multi-operation machined component.
+        </p>
+        <div class="dim-rule" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== WHY US === -->
+<section class="bp-grid spotlight relative overflow-hidden py-24">
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mb-14 reveal">
+      <p class="tech-label mb-5">The case for us</p>
+      <h2 class="font-display font-bold text-4xl sm:text-5xl text-white leading-tight">Why manufacturers stay</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bracket neon-edge panel rounded-2xl p-7 reveal" data-tilt>
+        <svg class="w-8 h-8 text-brand-500 mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3 class="font-bold text-white mb-2">Consistent quality</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Inspection before despatch, with no compromise on dimensional accuracy.</p>
+      </div>
+      <div class="bracket neon-edge panel rounded-2xl p-7 reveal" data-tilt data-reveal-delay="80">
+        <svg class="w-8 h-8 text-brand-500 mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+        </svg>
+        <h3 class="font-bold text-white mb-2">Fast turnaround</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">We know what a stopped line costs. Urgent jobs are treated as urgent.</p>
+      </div>
+      <div class="bracket neon-edge panel rounded-2xl p-7 reveal" data-tilt data-reveal-delay="160">
+        <svg class="w-8 h-8 text-brand-500 mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <h3 class="font-bold text-white mb-2">Full visibility</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Stage-by-stage tracking in the portal for every order you place.</p>
+      </div>
+      <div class="bracket neon-edge panel rounded-2xl p-7 reveal" data-tilt data-reveal-delay="240">
+        <svg class="w-8 h-8 text-signal-400 mb-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3 class="font-bold text-white mb-2">Fair pricing</h3>
+        <p class="text-sm text-steel-400 leading-relaxed">Costed properly, so the price holds and the quality does not drop to meet it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ CTA === -->
+<section class="bg-white py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bracket bracket-static rounded-3xl bg-steel-900 px-8 py-12 sm:px-12 text-center reveal">
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">Not sure if we cover your sector?</h2>
+      <p class="text-steel-400 leading-relaxed max-w-xl mx-auto mb-8">
+        If your industry is not listed above, we most likely still have the
+        capability. Tell us what you need made.
+      </p>
+      <a href="{% url 'contact' %}" class="btn-cta">Talk to us</a>
+    </div>
   </div>
 </section>
 

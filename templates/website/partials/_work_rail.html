@@ -1,0 +1,161 @@
+{% comment %}
+Featured work as a sliding rail.
+
+A scroll-snapping rail rather than a full-width slider: these are cards, and
+showing two or three at once reads better than one at a time. Native scrolling
+does the work, so a drag, a trackpad swipe and the arrow buttons all behave the
+same, and it degrades to a plain horizontal scroller with no JavaScript.
+
+Each card opens its own popup, as on the Our Work page.
+{% endcomment %}
+
+<section class="bg-white py-24"
+         x-data="{
+           rail: null,
+           step() { return this.rail ? this.rail.clientWidth * 0.85 : 0; },
+           slide(direction) { if (this.rail) this.rail.scrollBy({ left: direction * this.step(), behavior: 'smooth' }); }
+         }"
+         x-init="rail = $refs.rail">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="flex flex-wrap items-end justify-between gap-6 mb-12 reveal">
+      <div class="max-w-2xl">
+        <p class="tech-label tech-label--warm mb-5">Recent components</p>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-steel-900 leading-tight">Our work</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button type="button" class="slider__arrow !border-steel-300 !bg-white !text-steel-600 hover:!text-brand-600"
+                @click="slide(-1)">
+          <span class="sr-only">Scroll left</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button type="button" class="slider__arrow !border-steel-300 !bg-white !text-steel-600 hover:!text-brand-600"
+                @click="slide(1)">
+          <span class="sr-only">Scroll right</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="rail" x-ref="rail">
+      {% for sample in featured_work %}
+      <div x-data="{ popup: false }"
+           x-effect="document.body.style.overflow = popup ? 'hidden' : ''">
+
+        <article class="group bracket neon-edge panel-light rounded-2xl overflow-hidden flex flex-col h-full cursor-pointer"
+                 data-tilt
+                 @click="popup = true" @keydown.enter="popup = true"
+                 tabindex="0" role="button" aria-haspopup="dialog"
+                 aria-label="Open details for {{ sample.title }}">
+
+          {% if sample.image %}
+          <div class="h-56 overflow-hidden flex-shrink-0 bg-steel-100 relative">
+            <img src="{{ sample.image.url }}" alt="{{ sample.title }}" loading="lazy"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-ink-900/0 group-hover:bg-ink-900/40 transition-colors flex items-center justify-center">
+              <span class="readout text-[0.625rem] text-white uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity border border-white/40 rounded-lg px-3 py-2 backdrop-blur-sm">
+                View detail
+              </span>
+            </div>
+          </div>
+          {% else %}
+          <div class="h-56 bp-grid flex-shrink-0 flex items-center justify-center">
+            <span class="font-display font-bold text-brand-500 text-4xl tracking-[0.2em]">
+              {{ sample.get_category_display|slice:":3"|upper }}
+            </span>
+          </div>
+          {% endif %}
+
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <h3 class="font-bold text-steel-900">{{ sample.title }}</h3>
+              <span class="readout text-[0.5625rem] px-2 py-1 bg-steel-100 text-steel-600 rounded-md uppercase tracking-wider flex-shrink-0">
+                {{ sample.get_category_display }}
+              </span>
+            </div>
+            {% if sample.material %}
+            <p class="readout text-xs text-steel-400">
+              {{ sample.material }}{% if sample.machine_used %} · {{ sample.machine_used }}{% endif %}
+            </p>
+            {% endif %}
+          </div>
+        </article>
+
+        <!-- POPUP -->
+        <div x-show="popup" x-cloak class="popup-backdrop"
+             x-transition:enter="popup-enter" x-transition:enter-start="popup-enter-start" x-transition:enter-end="popup-enter-end"
+             x-transition:leave="popup-leave" x-transition:leave-start="popup-leave-start" x-transition:leave-end="popup-leave-end"
+             @click.self="popup = false" @keydown.escape.window="popup = false"
+             role="dialog" aria-modal="true" aria-label="{{ sample.title }}">
+
+          <div class="popup-panel"
+               x-transition:enter="panel-enter" x-transition:enter-start="panel-enter-start" x-transition:enter-end="panel-enter-end"
+               x-transition:leave="panel-leave" x-transition:leave-start="panel-leave-start" x-transition:leave-end="panel-leave-end">
+
+            <button type="button" class="popup-close" @click="popup = false">
+              <span class="sr-only">Close</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+
+            <div class="grid md:grid-cols-2">
+              {% if sample.image %}
+              <div class="bg-steel-100 md:min-h-[24rem]">
+                <img src="{{ sample.image.url }}" alt="{{ sample.title }}"
+                     class="w-full h-full object-cover max-h-[24rem] md:max-h-none">
+              </div>
+              {% else %}
+              <div class="bp-grid md:min-h-[24rem] min-h-[14rem] flex items-center justify-center">
+                <span class="font-display font-bold text-brand-500 text-5xl tracking-[0.2em]">
+                  {{ sample.get_category_display|slice:":3"|upper }}
+                </span>
+              </div>
+              {% endif %}
+
+              <div class="p-8 sm:p-10">
+                <p class="tech-label tech-label--warm mb-5">{{ sample.get_category_display }}</p>
+                <h3 class="font-display font-bold text-3xl text-steel-900 mb-5 tracking-wide">{{ sample.title }}</h3>
+                {% if sample.description %}
+                <p class="text-steel-600 leading-relaxed mb-7">{{ sample.description|linebreaksbr }}</p>
+                {% endif %}
+                <dl class="grid grid-cols-2 gap-5 py-6 border-y border-steel-200 mb-7">
+                  {% if sample.material %}
+                  <div>
+                    <dt class="readout text-[0.5625rem] text-steel-400 uppercase tracking-[0.15em] mb-1">Material</dt>
+                    <dd class="readout text-sm text-steel-800">{{ sample.material }}</dd>
+                  </div>
+                  {% endif %}
+                  {% if sample.machine_used %}
+                  <div>
+                    <dt class="readout text-[0.5625rem] text-steel-400 uppercase tracking-[0.15em] mb-1">Machine</dt>
+                    <dd class="readout text-sm text-steel-800">{{ sample.machine_used }}</dd>
+                  </div>
+                  {% endif %}
+                </dl>
+                <a href="{% url 'contact' %}" class="btn-cta w-full">Enquire about similar work</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-10">
+      <a href="{% url 'our_work' %}"
+         class="inline-flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700 transition-colors">
+        View the full portfolio
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

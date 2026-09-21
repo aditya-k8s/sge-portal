@@ -1,0 +1,26 @@
+{% comment %}
+Shared header for the inner public pages.
+
+Include with the three values, for example:
+
+  {% include "website/partials/_page_header.html" with eyebrow="Section 02" page_title="Our work" lead="Components we have made recently." %}
+
+The top padding clears the fixed navigation, which every inner page needs and
+which is easy to forget when writing a new one.
+{% endcomment %}
+
+<section class="bp-grid spotlight relative overflow-hidden pt-36 pb-16 lg:pt-44 lg:pb-20">
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p class="tech-label mb-6 reveal">{{ eyebrow }}</p>
+    <h1 class="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-white leading-[0.95] tracking-tight mb-6 max-w-4xl wipe">
+      {{ page_title }}
+    </h1>
+    {% if lead %}
+    <p class="text-steel-400 text-lg leading-relaxed max-w-2xl">{{ lead }}</p>
+    {% endif %}
+    <div class="dim-rule mt-10 max-w-md" aria-hidden="true"><span></span></div>
+  </div>
+</section>
