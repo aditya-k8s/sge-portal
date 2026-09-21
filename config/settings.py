@@ -9,8 +9,6 @@ take precedence. See .env.example for the full list.
 import os
 from pathlib import Path
 
-from django.urls import reverse_lazy
-
 from .env import Env, ImproperlyConfigured, read_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -294,10 +292,16 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # -- Authentication redirects -------------------------------------------------
-# reverse_lazy keeps these correct whatever SCRIPT_PREFIX is set to.
-LOGIN_URL = reverse_lazy('login')
-LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
-LOGOUT_REDIRECT_URL = reverse_lazy('home')
+# URL pattern names, not reverse_lazy(). Django resolves a name through
+# resolve_url() at the point of use, which honours SCRIPT_PREFIX exactly as
+# reverse_lazy did. A lazy object here is actively harmful: anything that
+# serialises or prints the settings -- Vercel's build step reads them and calls
+# json.dumps on them -- forces the lazy value, which imports the URLconf and
+# therefore the models before django.setup() has run, and the import fails with
+# AppRegistryNotReady.
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'home'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
 CRISPY_TEMPLATE_PACK = 'tailwind'
