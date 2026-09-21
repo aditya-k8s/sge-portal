@@ -32,11 +32,11 @@ SECRET_KEY = (
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '[::1]'])
 
-# Render assigns the hostname only once the service exists, so it cannot be
+# A platform assigns the hostname only once the service exists, so it cannot be
 # put in ALLOWED_HOSTS ahead of the first deploy. Render exposes it as
-# RENDER_EXTERNAL_HOSTNAME, so trust that when present. Harmless elsewhere:
-# the variable is simply not set.
-_platform_host = env.str('RENDER_EXTERNAL_HOSTNAME')
+# RENDER_EXTERNAL_HOSTNAME and Vercel as VERCEL_URL (host only, no scheme), so
+# trust whichever is present. Harmless elsewhere: neither variable is set.
+_platform_host = env.str('RENDER_EXTERNAL_HOSTNAME') or env.str('VERCEL_URL')
 if _platform_host and _platform_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_platform_host)
     CSRF_TRUSTED_ORIGINS_DEFAULT = ['https://' + _platform_host]
