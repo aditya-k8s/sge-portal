@@ -31,15 +31,26 @@ SECRET_KEY = (
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '[::1]'])
 
 # A platform assigns the hostname only once the service exists, so it cannot be
-# put in ALLOWED_HOSTS ahead of the first deploy. Render exposes it as
-# RENDER_EXTERNAL_HOSTNAME and Vercel as VERCEL_URL (host only, no scheme), so
-# trust whichever is present. Harmless elsewhere: neither variable is set.
-_platform_host = env.str('RENDER_EXTERNAL_HOSTNAME') or env.str('VERCEL_URL')
-if _platform_host and _platform_host not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append(_platform_host)
-    CSRF_TRUSTED_ORIGINS_DEFAULT = ['https://' + _platform_host]
-else:
-    CSRF_TRUSTED_ORIGINS_DEFAULT = []
+# put in ALLOWED_HOSTS ahead of the first deploy. Each exposes it as an
+# environment variable (host only, no scheme), so trust whichever is present.
+# Harmless elsewhere: none of the variables is set.
+#
+# Vercel needs both of its own: VERCEL_URL is this deployment's unique URL and
+# changes on every push, while VERCEL_PROJECT_PRODUCTION_URL is the stable
+# alias visitors use. Missing the second means the production domain is
+# rejected once DEBUG is off.
+_platform_hosts = [
+    host for host in (
+        env.str('RENDER_EXTERNAL_HOSTNAME'),
+        env.str('VERCEL_URL'),
+        env.str('VERCEL_PROJECT_PRODUCTION_URL'),
+    ) if host
+]
+CSRF_TRUSTED_ORIGINS_DEFAULT = []
+for _platform_host in _platform_hosts:
+    if _platform_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_platform_host)
+    CSRF_TRUSTED_ORIGINS_DEFAULT.append('https://' + _platform_host)
 
 if not DEBUG and ('*' in ALLOWED_HOSTS or not ALLOWED_HOSTS):
     raise ImproperlyConfigured(
